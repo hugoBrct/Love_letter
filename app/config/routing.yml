@@ -1,6 +1,6 @@
 jeu:
     resource: "@JeuBundle/Resources/config/routing.yml"
-    prefix:   /
+    prefix:   /jeu
 
 app:
     resource: '@AppBundle/Controller/'
