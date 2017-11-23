@@ -8,9 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
  * tableJeu
  *
  * @ORM\Table(name="table_jeu")
- * @ORM\Entity(repositoryClass="LL\JeuBundle\Repository\tableJeuRepository")
+ * @ORM\Entity(repositoryClass="LL\JeuBundle\Repository\TableJeuRepository")
  */
-class tableJeu
+class TableJeu
 {
     /**
      * @var int
@@ -44,7 +44,7 @@ class tableJeu
 
     public function __construct(){
         $this->tour = 0;
-        $this->etat = 'ouvert';
+        $this->etat = 'en attente d\'autre joueur';
     }
 
 
