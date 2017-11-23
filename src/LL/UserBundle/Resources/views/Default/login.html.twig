@@ -1,0 +1,23 @@
+{# src/LL/UserBundle/Resources/views/Security/login.html.twig #}
+
+{% extends 'squelette.html.twig' %}
+
+{% block body %}
+
+
+    {# Le formulaire, avec URL de soumission vers la route « login_check » comme on l'a vu #}
+    <form action="{{ path('login_check') }}" method="post">
+        <div class="form-group">
+        <label for="username">Login :</label>
+        <input type="text" class="form-control" id="username" name="_username" value="{{ last_username }}" />
+        </div>
+
+        <div class="form-group">
+        <label for="password">Mot de passe :</label>
+        <input type="password" class="form-control" id="password" name="_password" />
+        </div>
+        <br />
+        <input type="submit" class="btn btn-default" value="Connexion" />
+    </form>
+
+{% endblock %}
