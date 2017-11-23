@@ -8,6 +8,6 @@ class DefaultController extends Controller
 {
     public function indexAction()
     {
-        return $this->render('JeuBundle:Default:index.html.twig');
+        return $this->render('JeuBundle:Default:login.html.twig');
     }
 }

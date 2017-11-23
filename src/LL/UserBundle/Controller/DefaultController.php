@@ -8,6 +8,6 @@ class DefaultController extends Controller
 {
     public function indexAction()
     {
-        return $this->render('LLUserBundle:Default:index.html.twig');
+        return $this->render('LLUserBundle:Default:login.html.twig');
     }
 }
