@@ -1,3 +1,7 @@
 jeu_homepage:
     path:     /partie
     defaults: { _controller: JeuBundle:Jeu:partie }
+
+jeu_partie:
+    path:    /partieEnCours
+    defaults: { _controller: JeuBundle:TableJeu:creeTable }

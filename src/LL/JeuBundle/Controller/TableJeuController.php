@@ -2,11 +2,13 @@
 
 namespace LL\JeuBundle\Controller;
 
+
+use LL\JeuBundle\Entity\TableJeu;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-class JeuController extends Controller
+class TableJeuController extends Controller
 {
-    public function creerPartieAction() {
+    public function creeTableAction() {
         //Creation de l'entité
         $table = new TableJeu();
         $table->setNbJoueur(1);
@@ -20,6 +22,5 @@ class JeuController extends Controller
         $em->flush();
 
         return $this->render('JeuBundle:Partie:partie.html.twig', array('id' => $table->getId(), 'etat' => $table->getEtat()));
-
     }
 }
