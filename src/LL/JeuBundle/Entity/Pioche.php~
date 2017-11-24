@@ -1,0 +1,48 @@
+<?php
+
+namespace LL\JeuBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Pioche
+ *
+ * @ORM\Table(name="pioche")
+ * @ORM\Entity(repositoryClass="LL\JeuBundle\Repository\PiocheRepository")
+ */
+class Pioche
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="etat", type="string", length=255)
+     */
+    private $etat;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="LL\JeuBundle\Entity\TableJeu")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $table;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="LL\JeuBundle\Entity\Cartes")
+     */
+    private $carte;
+
+    public function __construct()
+    {
+        $this->etat = "pioche";
+    }
+
+
+}

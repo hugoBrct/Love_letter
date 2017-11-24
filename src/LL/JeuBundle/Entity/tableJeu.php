@@ -42,6 +42,7 @@ class TableJeu
      */
     private $nbJoueur;
 
+
     public function __construct(){
         $this->tour = 0;
         $this->etat = 'en attente d\'autre joueur';

@@ -28,13 +28,28 @@ class Pioche
      */
     private $etat;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="LL\JeuBundle\Entity\TableJeu")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $table;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="LL\JeuBundle\Entity\Cartes")
+     */
+    private $carte;
+
+    public function __construct()
+    {
+        $this->etat = "pioche";
+    }
 
 
 
     /**
      * Get id
      *
-     * @return int
+     * @return integer
      */
     public function getId()
     {
@@ -64,5 +79,52 @@ class Pioche
     {
         return $this->etat;
     }
-}
 
+    /**
+     * Set table
+     *
+     * @param \LL\JeuBundle\Entity\TableJeu $table
+     *
+     * @return Pioche
+     */
+    public function setTable(\LL\JeuBundle\Entity\TableJeu $table)
+    {
+        $this->table = $table;
+
+        return $this;
+    }
+
+    /**
+     * Get table
+     *
+     * @return \LL\JeuBundle\Entity\TableJeu
+     */
+    public function getTable()
+    {
+        return $this->table;
+    }
+
+    /**
+     * Set carte
+     *
+     * @param \LL\JeuBundle\Entity\Cartes $carte
+     *
+     * @return Pioche
+     */
+    public function setCarte(\LL\JeuBundle\Entity\Cartes $carte = null)
+    {
+        $this->carte = $carte;
+
+        return $this;
+    }
+
+    /**
+     * Get carte
+     *
+     * @return \LL\JeuBundle\Entity\Cartes
+     */
+    public function getCarte()
+    {
+        return $this->carte;
+    }
+}

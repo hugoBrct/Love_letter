@@ -35,6 +35,12 @@ class Joueur
      */
     private $point;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="LL\JeuBundle\Entity\tableJeu")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $table;
+
 
     /**
      * Get id
@@ -92,5 +98,29 @@ class Joueur
     public function getPoint()
     {
         return $this->point;
+    }
+
+    /**
+     * Set table
+     *
+     * @param \LL\JeuBundle\Entity\tableJeu $table
+     *
+     * @return Joueur
+     */
+    public function setTable(\LL\JeuBundle\Entity\tableJeu $table)
+    {
+        $this->table = $table;
+
+        return $this;
+    }
+
+    /**
+     * Get table
+     *
+     * @return \LL\JeuBundle\Entity\tableJeu
+     */
+    public function getTable()
+    {
+        return $this->table;
     }
 }

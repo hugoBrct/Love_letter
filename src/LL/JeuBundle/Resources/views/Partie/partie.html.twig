@@ -1,6 +1,13 @@
 {% extends 'JeuBundle:Default:index.html.twig' %}
 
 {% block jeu %}
-    <h1>Partie {{ id }}!</h1>
+    <h1>Partie {{ id }} !</h1>
     <h2>Etat : {{ etat }}</h2>
+
+    <ul>
+        {% for pioche in listCarte %}
+            <li>{{ pioche.carte.nom }} : {{ pioche.carte.point }}</li>
+        {% endfor %}
+    </ul>
+
 {% endblock %}

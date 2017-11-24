@@ -99,4 +99,28 @@ class Joueur
     {
         return $this->point;
     }
+
+    /**
+     * Set table
+     *
+     * @param \LL\JeuBundle\Entity\tableJeu $table
+     *
+     * @return Joueur
+     */
+    public function setTable(\LL\JeuBundle\Entity\tableJeu $table)
+    {
+        $this->table = $table;
+
+        return $this;
+    }
+
+    /**
+     * Get table
+     *
+     * @return \LL\JeuBundle\Entity\tableJeu
+     */
+    public function getTable()
+    {
+        return $this->table;
+    }
 }

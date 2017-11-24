@@ -19,3 +19,4 @@
 /var/SymfonyRequirements.php
 /web/config.php
 /.idea
+/composer.lock
