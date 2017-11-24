@@ -21,6 +21,7 @@ class AppKernel extends Kernel
             new LL\JeuBundle\JeuBundle(),
             new LL\UserBundle\LLUserBundle(),
             new Symfony\Bundle\AsseticBundle\AsseticBundle(),
+            new FOS\UserBundle\FOSUserBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
@@ -32,6 +33,11 @@ class AppKernel extends Kernel
                 $bundles[] = new Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
                 $bundles[] = new Symfony\Bundle\WebServerBundle\WebServerBundle();
             }
+        }
+
+        if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {
+            // ...
+            $bundles[] = new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle();
         }
 
         return $bundles;
