@@ -1,3 +1,13 @@
-jeu_partie:
-    path:    /partieEnCours
+jeu_creerPartie:
+    path:    /creationPartie
     defaults: { _controller: JeuBundle:Jeu:creerPartie }
+
+jeu_partie:
+    path:    /partie/{id}
+    defaults: { _controller: JeuBundle:Jeu:afficherPartie }
+    requirements:
+        id: \d+
+
+jeu_accueil:
+    path:    /accueil
+    defaults: { _controller: JeuBundle:Affichage:accueil }

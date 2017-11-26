@@ -41,6 +41,13 @@ class Joueur
      */
     private $table;
 
+    /**
+     * Constructeur par defaut d'un joueur
+     */
+    public function __construct(){
+        $this->point = 0;
+    }
+
 
     /**
      * Get id

@@ -3,9 +3,11 @@
 namespace LL\JeuBundle\Controller;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use LL\JeuBundle\Entity\Joueur;
 use LL\JeuBundle\Entity\Pioche;
 use LL\JeuBundle\Entity\TableJeu;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 class JeuController extends Controller
 {
@@ -31,12 +33,35 @@ class JeuController extends Controller
         //Construction de la pioche
         $this->construirePioche($em, $table);
 
+        //Construction d'un joueur
+        $joueur = $this->construireJoueur($em, $table);
+
+
+        //On genere l'url de la partie de id table
+        $url = $this->generateUrl('jeu_partie', array('id' => $table->getId()));
+        return $this->redirect($url);
+    }
+
+    public function afficherPartieAction($id){
+        $em = $this->getDoctrine()->getManager();
+
+        //Recuperation de la table selon l'id en parametre
+        $table = $em
+            ->getRepository('JeuBundle:TableJeu')
+            ->find($id);
+
         //Recuperation des cartes appartenant a la table
         $listCarte = $em
             ->getRepository('JeuBundle:Pioche')
             ->findBy(array('table' => $table));
 
-        return $this->render('JeuBundle:Partie:partie.html.twig', array('id' => $table->getId(), 'etat' => $table->getEtat(), 'listCarte' => $listCarte));
+        // On récupère le joueur qui a cree la table
+        $listJoueur = $em
+            ->getRepository('JeuBundle:Joueur')
+            ->findOneBy(array('table' => $table));
+
+
+        return $this->render('JeuBundle:Partie:partie.html.twig', array('table' => $table, 'listCarte' => $listCarte, 'joueur' => $listJoueur));
 
     }
 
@@ -79,6 +104,20 @@ class JeuController extends Controller
         $em->flush();
 
         return $table;
+    }
+
+    public function construireJoueur(ObjectManager $em, TableJeu $table){
+        //Creation d'un joueur
+        $joueur = new Joueur();
+        $joueur->setEmail("test@test.fr");
+        $joueur->setTable($table);
+
+        //on persite l'entite
+        $em->persist($joueur);
+        //on flush
+        $em->flush();
+
+        return $joueur;
     }
 
 
