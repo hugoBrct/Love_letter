@@ -23,6 +23,7 @@ class JeuController extends Controller
     "Garde" => "5",
     );
 
+
     public function creerPartieAction() {
         //Recup l'entity manager
         $em = $this->getDoctrine()->getManager();
@@ -42,6 +43,26 @@ class JeuController extends Controller
         return $this->redirect($url);
     }
 
+    public function rejoindrePartieAction(){
+        //Recup l'entity manager
+        $em = $this->getDoctrine()->getManager();
+        //Recuperation d'une table non pleine
+        $table = $em
+            ->getRepository('JeuBundle:TableJeu')
+            ->trouverPartie();
+
+        //On creer un joueur
+        $this->construireJoueur($em, $table);
+
+        //incrémente le nombre de joueur dans la table
+        $table->setNbJoueur($table->getNbJoueur()+1);
+        $em->flush();
+
+        //On genere l'url de la partie de id table
+        $url = $this->generateUrl('jeu_partie', array('id' => $table->getId()));
+        return $this->redirect($url);
+    }
+
     public function afficherPartieAction($id){
         $em = $this->getDoctrine()->getManager();
 
@@ -55,11 +76,10 @@ class JeuController extends Controller
             ->getRepository('JeuBundle:Pioche')
             ->findBy(array('table' => $table));
 
-        // On récupère le joueur qui a cree la table
+        // On récupère les joueurs a la table
         $listJoueur = $em
             ->getRepository('JeuBundle:Joueur')
-            ->findOneBy(array('table' => $table));
-
+            ->findBy(array('table' => $table));
 
         return $this->render('JeuBundle:Partie:partie.html.twig', array('table' => $table, 'listCarte' => $listCarte, 'joueur' => $listJoueur));
 
@@ -106,11 +126,12 @@ class JeuController extends Controller
         return $table;
     }
 
-    public function construireJoueur(ObjectManager $em, TableJeu $table){
+    public function construireJoueur(ObjectManager $em, $table){
         //Creation d'un joueur
         $joueur = new Joueur();
-        $joueur->setEmail("test@test.fr");
+        $joueur->setEmail("test". rand(0, 100)."@test.fr");
         $joueur->setTable($table);
+        $joueur->setOrdreDePassage($table->getNbJoueur()+1);
 
         //on persite l'entite
         $em->persist($joueur);

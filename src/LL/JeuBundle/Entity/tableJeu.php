@@ -31,9 +31,16 @@ class TableJeu
     /**
      * @var int
      *
-     * @ORM\Column(name="tour", type="integer")
+     * @ORM\Column(name="aQuiLeTour", type="integer")
      */
-    private $tour;
+    private $aQuiLeTour;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="manche", type="integer")
+     */
+    private $manche;
 
     /**
      * @var int
@@ -43,16 +50,23 @@ class TableJeu
     private $nbJoueur;
 
 
+
+
     public function __construct(){
         $this->tour = 0;
         $this->etat = 'en attente d\'autre joueur';
+        $this->aQuiLeTour = 1;
+        $this->manche = 1;
+        $this->nbJoueur = 0;
     }
+
+
 
 
     /**
      * Get id
      *
-     * @return int
+     * @return integer
      */
     public function getId()
     {
@@ -64,7 +78,7 @@ class TableJeu
      *
      * @param string $etat
      *
-     * @return tableJeu
+     * @return TableJeu
      */
     public function setEtat($etat)
     {
@@ -84,27 +98,51 @@ class TableJeu
     }
 
     /**
-     * Set tour
+     * Set aQuiLeTour
      *
-     * @param integer $tour
+     * @param integer $aQuiLeTour
      *
-     * @return tableJeu
+     * @return TableJeu
      */
-    public function setTour($tour)
+    public function setAQuiLeTour($aQuiLeTour)
     {
-        $this->tour = $tour;
+        $this->aQuiLeTour = $aQuiLeTour;
 
         return $this;
     }
 
     /**
-     * Get tour
+     * Get aQuiLeTour
      *
-     * @return int
+     * @return integer
      */
-    public function getTour()
+    public function getAQuiLeTour()
     {
-        return $this->tour;
+        return $this->aQuiLeTour;
+    }
+
+    /**
+     * Set manche
+     *
+     * @param integer $manche
+     *
+     * @return TableJeu
+     */
+    public function setManche($manche)
+    {
+        $this->manche = $manche;
+
+        return $this;
+    }
+
+    /**
+     * Get manche
+     *
+     * @return integer
+     */
+    public function getManche()
+    {
+        return $this->manche;
     }
 
     /**
@@ -112,7 +150,7 @@ class TableJeu
      *
      * @param integer $nbJoueur
      *
-     * @return tableJeu
+     * @return TableJeu
      */
     public function setNbJoueur($nbJoueur)
     {

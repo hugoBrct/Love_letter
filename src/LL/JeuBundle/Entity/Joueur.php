@@ -31,28 +31,44 @@ class Joueur
     /**
      * @var int
      *
-     * @ORM\Column(name="point", type="integer")
+     * @ORM\Column(name="score", type="integer")
      */
-    private $point;
+    private $score;
 
     /**
-     * @ORM\ManyToOne(targetEntity="LL\JeuBundle\Entity\tableJeu")
+     * @ORM\ManyToOne(targetEntity="LL\JeuBundle\Entity\TableJeu")
      * @ORM\JoinColumn(nullable=false)
      */
     private $table;
 
     /**
+     * @ORM\ManyToOne(targetEntity="LL\JeuBundle\Entity\Pioche")
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $cartes;
+
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="ordreDePassage", type="integer")
+     */
+    private $ordreDePassage;
+
+    /**
      * Constructeur par defaut d'un joueur
      */
     public function __construct(){
-        $this->point = 0;
+        $this->score = 0;
     }
+
+
 
 
     /**
      * Get id
      *
-     * @return int
+     * @return integer
      */
     public function getId()
     {
@@ -84,27 +100,51 @@ class Joueur
     }
 
     /**
-     * Set point
+     * Set score
      *
-     * @param integer $point
+     * @param integer $score
      *
      * @return Joueur
      */
-    public function setPoint($point)
+    public function setScore($score)
     {
-        $this->point = $point;
+        $this->score = $score;
 
         return $this;
     }
 
     /**
-     * Get point
+     * Get score
      *
-     * @return int
+     * @return integer
      */
-    public function getPoint()
+    public function getScore()
     {
-        return $this->point;
+        return $this->score;
+    }
+
+    /**
+     * Set ordreDePassage
+     *
+     * @param integer $ordreDePassage
+     *
+     * @return Joueur
+     */
+    public function setOrdreDePassage($ordreDePassage)
+    {
+        $this->ordreDePassage = $ordreDePassage;
+
+        return $this;
+    }
+
+    /**
+     * Get ordreDePassage
+     *
+     * @return integer
+     */
+    public function getOrdreDePassage()
+    {
+        return $this->ordreDePassage;
     }
 
     /**
@@ -129,5 +169,29 @@ class Joueur
     public function getTable()
     {
         return $this->table;
+    }
+
+    /**
+     * Set cartes
+     *
+     * @param \LL\JeuBundle\Entity\Pioche $cartes
+     *
+     * @return Joueur
+     */
+    public function setCartes(\LL\JeuBundle\Entity\Pioche $cartes = null)
+    {
+        $this->cartes = $cartes;
+
+        return $this;
+    }
+
+    /**
+     * Get cartes
+     *
+     * @return \LL\JeuBundle\Entity\Pioche
+     */
+    public function getCartes()
+    {
+        return $this->cartes;
     }
 }

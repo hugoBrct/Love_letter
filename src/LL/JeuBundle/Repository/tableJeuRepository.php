@@ -10,4 +10,27 @@ namespace LL\JeuBundle\Repository;
  */
 class TableJeuRepository extends \Doctrine\ORM\EntityRepository
 {
+    /**
+     * Retourne la premiere table non pleine
+     * @return TableJeu
+     */
+    public function trouverPartie(){
+
+        $max_Joueur = 4;
+
+        $qb = $this->createQueryBuilder('t');
+
+        $qb->where('t.nbJoueur < :maxJoueur')
+            ->setParameter('maxJoueur', $max_Joueur);
+
+        $listTable = $qb
+            ->getQuery()
+            ->getResult()
+            ;
+
+        //retourne la premiere table non pleine
+        $table = current($listTable);
+        return $table;
+    }
+
 }

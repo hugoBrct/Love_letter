@@ -8,6 +8,10 @@ jeu_partie:
     requirements:
         id: \d+
 
+jeu_rejoindrePartie:
+    path:    /rejoindrePartie
+    defaults: { _controller: JeuBundle:Jeu:rejoindrePartie }
+
 jeu_accueil:
     path:    /accueil
     defaults: { _controller: JeuBundle:Affichage:accueil }

@@ -44,5 +44,4 @@ class Pioche
         $this->etat = "pioche";
     }
 
-
 }

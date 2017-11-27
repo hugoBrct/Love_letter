@@ -1,4 +1,4 @@
-{% extends 'JeuBundle:Default:index.html.twig' %}
+{% extends '::squelette.html.twig' %}
 
 {% block jeu %}
     <h1>Partie {{ table.id }} !</h1>
@@ -10,6 +10,8 @@
         {% endfor %}
     </ul>
 
-    <h2>Joueur : {{ joueur.email }} score : {{ joueur.point }}</h2>
+    {% for joueur in joueur %}
+        <h2>Joueur : {{ joueur.email }} Score : {{ joueur.score }} </h2>
+    {% endfor %}
 
 {% endblock %}
