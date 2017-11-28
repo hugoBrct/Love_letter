@@ -81,7 +81,19 @@ class JeuController extends Controller
             ->getRepository('JeuBundle:Joueur')
             ->findBy(array('table' => $table));
 
-        return $this->render('JeuBundle:Partie:partie.html.twig', array('table' => $table, 'listCarte' => $listCarte, 'joueur' => $listJoueur));
+        //on regarde si il y a plus de 2 joueur
+        if(sizeof($listJoueur) >= 2){
+            //Si oui on change l'etat de la partie
+            $table->setEtat("Partie jouable");
+            $em->flush();
+        }
+
+        return $this->render('JeuBundle:Partie:partie.html.twig',
+            array('table' => $table,
+                'listCarte' => $listCarte,
+                'joueur' => $listJoueur,
+            )
+        );
 
     }
 
