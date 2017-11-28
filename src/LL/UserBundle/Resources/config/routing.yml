@@ -15,8 +15,6 @@ logout:
     path: /logout
 
 
-register:
-    path: /register
 
 # app/config/routing.yml
 fos_user_security:
