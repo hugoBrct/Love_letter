@@ -1,0 +1,17 @@
+{# src/LL/UserBundle/Resources/views/Security/login.html.twig #}
+
+{% extends 'squelette.html.twig' %}
+
+{% block body %}
+
+    {# Redirection vers le login #}
+    <form action="{{ path('login') }}" method="get">
+        <input type="submit" class="btn btn-default" value="Login">
+    </form>
+
+    {# Redirection vers le register #}
+    <form action="{{ path('register') }}" method="get">
+        <input type="submit" class="btn btn-default" value="Register">
+    </form>
+
+{% endblock %}

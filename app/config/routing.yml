@@ -1,28 +1,13 @@
-ll_user:
-    resource: "@LLUserBundle/Resources/config/routing.yml"
-    prefix:   /
 
 jeu:
     resource: "@JeuBundle/Resources/config/routing.yml"
     prefix:   /jeu
 
+user:
+    resource: "@LLUserBundle/Resources/config/routing.yml"
+    prefix: /user
+
 app:
     resource: '@AppBundle/Controller/'
     type: annotation
 
-login:
-    path : /login
-    defaults:
-        _controller: LLUserBundle:Security:login
-
-
-login_check:
-    path: /login_check
-
-logout:
-    path: /logout
-
-hello-world:
-    path: /
-    defaults:
-        _controller: LLJeuBundle:Default:index

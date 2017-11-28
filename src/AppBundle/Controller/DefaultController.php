@@ -13,9 +13,14 @@ class DefaultController extends Controller
      */
     public function indexAction(Request $request)
     {
-        // replace this example code with whatever you need
-        return $this->render('default/login.html.twig', [
-            'base_dir' => realpath($this->getParameter('kernel.project_dir')).DIRECTORY_SEPARATOR,
-        ]);
+        //On regarde si l'utilisateur est deja connecté ou non
+        if ($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
+            //Si il est deja connecté, on le redirige vers l'acceuil du jeu
+            return $this->render('JeuBundle:Default:index.html.twig');
+        }
+
+
+        //On propose a l'utilisateur de se connecter ou de creer un compte.
+        return $this->render('LLUserBundle:Default:homepage.html.twig');
     }
 }
