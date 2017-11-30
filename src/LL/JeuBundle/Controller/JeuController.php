@@ -97,8 +97,6 @@ class JeuController extends Controller
 
         //Creation du jeu de carte
         foreach($listCartes as $carte){
-            $compteur = 0;
-            while($compteur < $this->tabDeck[$carte->getNom()]){
                 $pioche = new Pioche();
                 $pioche->setTable($table);
                 $pioche->setCarte($carte);
@@ -106,9 +104,6 @@ class JeuController extends Controller
                 $em->persist($pioche);
                 //on flush
                 $em->flush();
-
-                $compteur++;
-            }
         }
     }
 
@@ -129,7 +124,8 @@ class JeuController extends Controller
     public function construireJoueur(ObjectManager $em, $table){
         //Creation d'un joueur
         $joueur = new Joueur();
-        $joueur->setEmail("test". rand(0, 100)."@test.fr");
+        $usr= $this->get('security.token_storage')->getToken()->getUser();
+        $joueur->setEmail($usr->getEmail());
         $joueur->setTable($table);
         $joueur->setOrdreDePassage($table->getNbJoueur()+1);
 

@@ -7,11 +7,14 @@
     <ul>
         {% for pioche in listCarte %}
             <li>{{ pioche.carte.nom }} : {{ pioche.carte.point }}</li>
+            <img src="../../../../web/skin_cartes/{{ pioche.carte.img }}">
         {% endfor %}
     </ul>
 
     {% for joueur in joueur %}
         <h2>Joueur : {{ joueur.email }} Score : {{ joueur.score }} </h2>
     {% endfor %}
+
+
 
 {% endblock %}
