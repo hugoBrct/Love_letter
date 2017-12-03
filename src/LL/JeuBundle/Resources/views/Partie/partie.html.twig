@@ -13,6 +13,7 @@
     <ul>
         {% for pioche in listCarte %}
             <li>{{ pioche.carte.nom }} : {{ pioche.carte.point }}</li>
+            <img src="../../../../web/skin_cartes/{{ pioche.carte.img }}">
         {% endfor %}
     </ul>
 
@@ -39,5 +40,7 @@
         });
 
     </script>
+
+
 
 {% endblock %}

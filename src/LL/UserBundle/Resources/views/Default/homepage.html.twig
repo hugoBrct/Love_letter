@@ -4,14 +4,6 @@
 
 {% block body %}
 
-    {# Redirection vers le login #}
-    <form action="{{ path('login') }}" method="get">
-        <input type="submit" class="btn btn-default" value="Login">
-    </form>
 
-    {# Redirection vers le register #}
-    <form action="{{ '/Symfony/web/app_dev.php/user/register' }}" method="get">
-        <input type="submit" class="btn btn-default" value="Register">
-    </form>
 
 {% endblock %}
