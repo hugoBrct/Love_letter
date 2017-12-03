@@ -11,18 +11,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 class JeuController extends Controller
 {
-    //hashmap pour la creation du deck
-    private $tabDeck = array(
-    "Princesse" => "1",
-    "Comptesse" => "1",
-    "Roi" => "1",
-    "Prince" => "2",
-    "Servante" => "2",
-    "Baron" => "2",
-    "Pretre" => "2",
-    "Garde" => "5",
-    );
-
 
     public function creerPartieAction() {
         //Recup l'entity manager
@@ -54,7 +42,7 @@ class JeuController extends Controller
         //On creer un joueur
         $this->construireJoueur($em, $table);
 
-        //incrémente le nombre de joueur dans la table
+        //incrï¿½mente le nombre de joueur dans la table
         $table->setNbJoueur($table->getNbJoueur()+1);
         $em->flush();
 
@@ -76,13 +64,21 @@ class JeuController extends Controller
             ->getRepository('JeuBundle:Pioche')
             ->findBy(array('table' => $table));
 
-        // On récupère les joueurs a la table
+        //Recuperattion du user
+        $user = $this->getUser();
+
+        //Recuperation du joueur courant
+        $joueur = $em
+            ->getRepository('JeuBundle:Joueur')
+            ->findOneBy(array('email' => $user->getEmail()));
+
+        // On rÃ©cupÃ¨re les joueurs a la table
         $listJoueur = $em
             ->getRepository('JeuBundle:Joueur')
-            ->findBy(array('table' => $table));
+            ->recupererListJoueur($table, $joueur);
 
         //on regarde si il y a plus de 2 joueur
-        if(sizeof($listJoueur) >= 2){
+        if(sizeof($listJoueur) > 1){
             //Si oui on change l'etat de la partie
             $table->setEtat("Partie jouable");
             $em->flush();
@@ -91,7 +87,8 @@ class JeuController extends Controller
         return $this->render('JeuBundle:Partie:partie.html.twig',
             array('table' => $table,
                 'listCarte' => $listCarte,
-                'joueur' => $listJoueur,
+                'listJoueur' => $listJoueur,
+                'joueur' => $joueur
             )
         );
 
@@ -120,10 +117,10 @@ class JeuController extends Controller
     }
 
     public function construireTable(ObjectManager $em){
-        //Creation de l'entité table
+        //Creation de l'entitï¿½ table
         $table = new TableJeu();
         $table->setNbJoueur(1);
-        //le reste est défini automatiquement dans le constructeur
+        //le reste est dï¿½fini automatiquement dans le constructeur
 
         //on persite l'entite
         $em->persist($table);

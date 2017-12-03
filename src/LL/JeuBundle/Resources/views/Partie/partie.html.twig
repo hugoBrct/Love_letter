@@ -10,20 +10,40 @@
         </div>
     </div>
 
-    <ul>
+    {#<ul>
         {% for pioche in listCarte %}
             <li>{{ pioche.carte.nom }} : {{ pioche.carte.point }}</li>
-            <img src="../../../../web/skin_cartes/{{ pioche.carte.img }}">
+            <img src="{{ asset('skin_cartes/') }}{{ pioche.carte.img }}">
         {% endfor %}
-    </ul>
+    </ul>#}
 
-    <div class="row">
-        {% for joueur in joueur %}
-            <div class="col-md-3 ">
-                <h4>Joueur : {{ joueur.email }} Score : {{ joueur.score }} </h4>
+    <div class="container">
+        <div class="row">
+
+            <div class="col-xs-12">
+                <div class="row">
+                    <p class="text-center">Let's go !</p>
+                </div>
+                <div class="row">
+                    {% for joueur in listJoueur %}
+                        <div class="col-xs-4">
+                            <h4>Joueur : {{ joueur.email }} Score : {{ joueur.score }} </h4>
+                        </div>
+                    {% endfor %}
+                </div>
+                <br>
+                <br>
+                <br>
+                <div class="row">
+                    <div class="col-xs-4 col-xs-offset-4">
+                        <h4>Joueur : {{ joueur.email }} Score : {{ joueur.score }} </h4>
+                    </div>
+                </div>
             </div>
-        {% endfor %}
+        </div>
     </div>
+
+
 
 
     <script type="text/javascript">
