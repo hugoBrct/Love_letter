@@ -7,6 +7,8 @@ use LL\JeuBundle\Entity\Joueur;
 use LL\JeuBundle\Entity\Pioche;
 use LL\JeuBundle\Entity\TableJeu;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\BrowserKit\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class JeuController extends Controller
@@ -51,6 +53,8 @@ class JeuController extends Controller
         return $this->redirect($url);
     }
 
+
+
     public function afficherPartieAction($id){
         $em = $this->getDoctrine()->getManager();
 
@@ -92,6 +96,16 @@ class JeuController extends Controller
             )
         );
 
+    }
+
+
+    public function lancerPartieAction(){
+        //On change l'etat de la partie
+        //On lance le manche
+
+        //On genere l'url de la partie de id table
+        $url = $this->generateUrl('jeu_partie', array('id' => $table->getId()));
+        return $this->redirect($url);
     }
 
     public function construirePioche(ObjectManager $em, $table){
@@ -146,5 +160,11 @@ class JeuController extends Controller
         return $joueur;
     }
 
+    public function refreshPartieAction(Request $req){
+        if($req->isXmlHttpRequest()){
+            return new JsonResponse("Victoire",200);
+        }
+        return new JsonResponse("Echec", 400);
+    }
 
 }

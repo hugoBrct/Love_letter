@@ -15,3 +15,13 @@ jeu_rejoindrePartie:
 jeu_accueil:
     path:    /accueil
     defaults: { _controller: JeuBundle:Affichage:accueil }
+
+
+jeu_refreshPartie:
+    path:    /refreshPartie
+    defaults: { _controller: JeuBundle:Jeu:refreshPartie }
+    methods: POST
+
+jeu_lancerPartie:
+    path: /lancerPartie
+    defaults: { _controller: JeuBundle:Jeu:lancerPartie }
