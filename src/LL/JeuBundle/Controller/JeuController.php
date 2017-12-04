@@ -64,10 +64,6 @@ class JeuController extends Controller
             ->getRepository('JeuBundle:TableJeu')
             ->find($id);
 
-        //Recuperation des cartes appartenant a la table
-        $listCarte = $em
-            ->getRepository('JeuBundle:Pioche')
-            ->findBy(array('table' => $table));
 
         //Recuperattion du user
         $user = $this->getUser();
@@ -82,32 +78,20 @@ class JeuController extends Controller
             ->getRepository('JeuBundle:Joueur')
             ->recupererListJoueur($table, $joueur);
 
-        //on regarde si il y a plus de 2 joueur
-        if(sizeof($listJoueur) > 1){
-            //Si oui on change l'etat de la partie
-            $table->setEtat("Partie jouable");
-            $em->flush();
-        }
+        //Recuperation de la ou les cartes du joueur courant
+        $carte = $em->getRepository('JeuBundle:Pioche')->findBy(array('proprietaire' => $joueur));
+
 
         return $this->render('JeuBundle:Partie:partie.html.twig',
             array('table' => $table,
-                'listCarte' => $listCarte,
                 'listJoueur' => $listJoueur,
-                'joueur' => $joueur
+                'joueur' => $joueur,
+                'carteEnMain' => $carte
             )
         );
 
     }
 
-
-    public function lancerPartieAction(){
-        //On change l'etat de la partie
-        //On lance le manche
-
-        //On genere l'url de la partie de id table
-        $url = $this->generateUrl('jeu_partie', array('id' => $table->getId()));
-        return $this->redirect($url);
-    }
 
     public function construirePioche(ObjectManager $em, $table){
         //On recupere les cartes
@@ -166,6 +150,86 @@ class JeuController extends Controller
             return new JsonResponse("Victoire",200);
         }
         return new JsonResponse("Echec", 400);
+    }
+
+    public function lancerPartieAction($id){
+
+        $em = $this->getDoctrine()->getManager();
+
+        //On change l'etat de la partie
+        $partie = $em->getRepository('JeuBundle:TableJeu')->find($id);
+        $partie->setEtat("Ferme");
+
+        $em->flush();
+
+        //On lance la manche
+        $this->lancerManche($id);
+
+        //On genere l'url de la partie de id table
+        $url = $this->generateUrl('jeu_partie', array('id' => $id));
+        return $this->redirect($url);
+    }
+
+    /**
+     * Permet de lancer une manche
+     * @param $idTable, id de la table
+     */
+    public function lancerManche($idTable){
+        $em = $this->getDoctrine()->getManager();
+
+        //reinitialisation de toutes les cartes dans la pioche
+        $listCarte = $em->getRepository('JeuBundle:Pioche')->findBy(array('table' => $idTable));
+
+        foreach($listCarte as $carte){
+            $carte->setEtat('pioche');
+            $carte->setProprietaire(null);
+        }
+
+        $listJoueur = $em->getRepository('JeuBundle:Joueur')->findBy(array('table' => $idTable));
+
+        //Recuperation de x cartes
+        //et distribution de 1 carte aux joueurs
+        if(sizeof($listJoueur == 2)){
+            /**  Cas 2 joueurs  **/
+            $x = sizeof($listJoueur) + 4;
+            $cartePiochey = array_rand($listCarte, $x);
+
+            //Ecarter 1 carte face cachée
+            $carte = $listCarte[$cartePiochey[0]];
+            $carte->setEtat('ecarte');
+
+            // 3 cartes face visible
+            for($i = 1; $i < 4; $i++){
+                $carte = $listCarte[$cartePiochey[$i]];
+                $carte->setEtat('faceVisible');
+            }
+            //Attribution de 1 carte pour chaque joueur
+            $i = 4;
+            foreach($listJoueur as $joueur) {
+                $carte = $listCarte[$cartePiochey[$i]];
+                $carte->setEtat('enMain');
+                $carte->setProprietaire($joueur);
+                $i++;
+            }
+        }else{
+            /**  Cas plus de 2 joueurs  **/
+            $x = sizeof($listJoueur) + 1;
+            $cartePiochey = array_rand($listCarte, $x);
+
+            //Ecarter 1 carte face cachée
+            $carte = $listCarte[$cartePiochey[0]];
+            $carte->setEtat('ecarte');
+
+            //Attribution de 1 carte pour chaque joueur
+            $i = 1;
+            foreach($listJoueur as $joueur) {
+                $carte = $listCarte[$cartePiochey[$i]];
+                $carte->setEtat('enMain');
+                $carte->setProprietaire($joueur);
+                $i++;
+            }
+        }
+        $em->flush();
     }
 
 }

@@ -10,4 +10,28 @@ namespace LL\JeuBundle\Repository;
  */
 class PiocheRepository extends \Doctrine\ORM\EntityRepository
 {
+
+    /**
+     * Permet de recuperer la liste des cartes pas encore pioché
+     * @param $id, id de la table
+     * @return array, liste des cartes piochable
+     */
+    public function recupererCartePiochable($id){
+        //recupere toute les cartes piochable dans
+        // la pioche de la table en param
+        $listCarte = $this->findBy(array('table' => $id));
+
+        $qb = $this->createQueryBuilder('p');
+
+        $qb->where('p.table != :table')
+            ->setParameter('table', $id)
+            ->andWhere('p.etat = :etat')
+            ->setParameter('etat', 'pioche')
+        ;
+
+        return $listCarte = $qb
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 }

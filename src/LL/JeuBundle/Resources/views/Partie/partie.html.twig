@@ -6,7 +6,7 @@
 
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
-            <a id="lancerPartie" type="button" class="btn btn-primary" href="{{ path() }}">Lancer partie !</a>
+            <a id="lancerPartie" post type="button" class="btn btn-primary" href="{{ path('jeu_lancerPartie', {'id' : table.id}) }}">Lancer partie !</a>
         </div>
     </div>
 
@@ -37,6 +37,12 @@
                 <div class="row">
                     <div class="col-xs-4 col-xs-offset-4">
                         <h4>Joueur : {{ joueur.email }} Score : {{ joueur.score }} </h4>
+                        {% if carteEnMain is not empty %}
+                            <h2>non vide</h2>
+                            {% for carte in carteEnMain %}
+                                <img src="{{ asset('skin_cartes/') }}{{ carte.carte.img }}">
+                            {% endfor %}
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -47,7 +53,7 @@
 
 
     <script type="text/javascript">
-        var interval = 3000;
+        var interval = 10000;
         function load() {
             setTimeout(function () {
                 $.ajax({

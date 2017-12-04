@@ -23,5 +23,7 @@ jeu_refreshPartie:
     methods: POST
 
 jeu_lancerPartie:
-    path: /lancerPartie
+    path: /lancerPartie/{id}
     defaults: { _controller: JeuBundle:Jeu:lancerPartie }
+    requirements:
+            id: \d+
