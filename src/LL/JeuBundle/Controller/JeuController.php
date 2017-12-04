@@ -52,6 +52,7 @@ class JeuController extends Controller
     }
 
     public function afficherPartieAction($id){
+
         $em = $this->getDoctrine()->getManager();
 
         //Recuperation de la table selon l'id en parametre

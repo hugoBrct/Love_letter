@@ -35,6 +35,11 @@ class Pioche
     private $table;
 
     /**
+     * @ORM\ManyToOne(targetEntity="LL\JeuBundle\Entity\Joueur")
+     */
+    private $proprietaire;
+
+    /**
      * @ORM\ManyToOne(targetEntity="LL\JeuBundle\Entity\Cartes")
      */
     private $carte;
@@ -43,5 +48,7 @@ class Pioche
     {
         $this->etat = "pioche";
     }
+
+
 
 }

@@ -41,11 +41,7 @@ class Joueur
      */
     private $table;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="LL\JeuBundle\Entity\Pioche")
-     * @ORM\JoinColumn(nullable=true)
-     */
-    private $cartes;
+
 
 
     /**
@@ -150,11 +146,11 @@ class Joueur
     /**
      * Set table
      *
-     * @param \LL\JeuBundle\Entity\tableJeu $table
+     * @param \LL\JeuBundle\Entity\TableJeu $table
      *
      * @return Joueur
      */
-    public function setTable(\LL\JeuBundle\Entity\tableJeu $table)
+    public function setTable(\LL\JeuBundle\Entity\TableJeu $table)
     {
         $this->table = $table;
 
@@ -164,34 +160,10 @@ class Joueur
     /**
      * Get table
      *
-     * @return \LL\JeuBundle\Entity\tableJeu
+     * @return \LL\JeuBundle\Entity\TableJeu
      */
     public function getTable()
     {
         return $this->table;
-    }
-
-    /**
-     * Set cartes
-     *
-     * @param \LL\JeuBundle\Entity\Pioche $cartes
-     *
-     * @return Joueur
-     */
-    public function setCartes(\LL\JeuBundle\Entity\Pioche $cartes = null)
-    {
-        $this->cartes = $cartes;
-
-        return $this;
-    }
-
-    /**
-     * Get cartes
-     *
-     * @return \LL\JeuBundle\Entity\Pioche
-     */
-    public function getCartes()
-    {
-        return $this->cartes;
     }
 }

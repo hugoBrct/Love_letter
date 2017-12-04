@@ -35,6 +35,11 @@ class Pioche
     private $table;
 
     /**
+     * @ORM\ManyToOne(targetEntity="LL\JeuBundle\Entity\Joueur")
+     */
+    private $proprietaire;
+
+    /**
      * @ORM\ManyToOne(targetEntity="LL\JeuBundle\Entity\Cartes")
      */
     private $carte;
@@ -43,6 +48,8 @@ class Pioche
     {
         $this->etat = "pioche";
     }
+
+
 
 
     /**
@@ -101,6 +108,30 @@ class Pioche
     public function getTable()
     {
         return $this->table;
+    }
+
+    /**
+     * Set proprietaire
+     *
+     * @param \LL\JeuBundle\Entity\Joueur $proprietaire
+     *
+     * @return Pioche
+     */
+    public function setProprietaire(\LL\JeuBundle\Entity\Joueur $proprietaire = null)
+    {
+        $this->proprietaire = $proprietaire;
+
+        return $this;
+    }
+
+    /**
+     * Get proprietaire
+     *
+     * @return \LL\JeuBundle\Entity\Joueur
+     */
+    public function getProprietaire()
+    {
+        return $this->proprietaire;
     }
 
     /**
