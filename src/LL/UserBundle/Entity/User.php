@@ -20,5 +20,10 @@ class User extends BaseUser
      */
     protected $id;
 
+
+    public function __construct(){
+        parent::__construct();
+        $this->roles[0] = 'ROLE_JOUEUR';
+    }
 }
 
