@@ -1,0 +1,44 @@
+html {
+    background-image: url("../autre_images/background.jpg");
+    z-index: -1;
+}
+
+.partie_en_attente {
+
+    width: 500px;
+    background-color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.login {
+    width: 300px;
+    background-color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.bienvenue {
+    width: 600px;
+    background-color: white;
+    padding: 40px;
+}
+
+.bienvenue h1{
+    margin: 40px 20px 40px 20px;
+    text-align: center;
+}
+
+.main_joueur {
+    background-color: blue;
+    position: absolute;
+    bottom: 0;
+    height: 300px;
+    width: 50%;
+    margin: 0 auto;
+    display: inline-block;
+}
+
+.main_joueur  img {
+    height: 100%;
+}

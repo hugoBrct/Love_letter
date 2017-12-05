@@ -30,7 +30,7 @@ security:
                 path:       logout
                 target:     login
             remember_me:
-                secret: %secret%
+                secret: '%secret%'
             # activate different ways to authenticate
 
             # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate

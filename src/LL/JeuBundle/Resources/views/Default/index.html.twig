@@ -2,9 +2,25 @@
 {% extends '::squelette.html.twig' %}
 
 {% block accueil %}
-    <h1>Bienvenu sur love letter</h1>
-    <a title="Creer une partie" class="btn btn-primary" href="{{ path('jeu_creerPartie') }}">Creer une partie</a>
-    <a title="Rejoindre une partie" class="btn btn-primary" href="{{ path('jeu_rejoindrePartie') }}">Rejoindre une partie</a>
+    <div class=" bienvenue container">
+        <div class="row">
+            <h1>Bienvenue sur love letter</h1>
+        </div>
+        <div class="row">
+            <a title="Creer une partie" class="btn btn-primary btn-lg btn-block" href="{{ path('jeu_creerPartie') }}">Creer une partie</a>
+        </div>
+        <br>
+        <br>
+        <div class="row">
+            <div class="form-group">
+                <label for="usr">ID de la partie à rejoindre:</label>
+                <input type="text" class="form-control" id="usr" placeholder="Laissez vide pour partie aléatoire">
+            </div>
+        </div>
+        <div class="row">
+            <a title="Rejoindre une partie" class="btn btn-primary btn-lg btn-block" href="{{ path('jeu_rejoindrePartie') }}">Rejoindre une partie</a>
+        </div>
+    </div>
 
 {% endblock %}
 

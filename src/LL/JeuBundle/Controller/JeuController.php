@@ -156,6 +156,7 @@ class JeuController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
+        //On s'assure qu'au moins deux joueurs sont présents TODO
         //On change l'etat de la partie
         $partie = $em->getRepository('JeuBundle:TableJeu')->find($id);
         $partie->setEtat("Ferme");
