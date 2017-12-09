@@ -27,6 +27,9 @@ security:
             form_login:
                 login_path: login
                 check_path: login_check
+                 # login success redirecting options (read further below)
+                always_use_default_target_path: true
+                default_target_path:            /jeu/accueil
             logout:
                 path:       logout
                 target:     login
