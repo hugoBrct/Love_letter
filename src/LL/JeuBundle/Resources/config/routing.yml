@@ -9,8 +9,10 @@ jeu_partie:
         id: \d+
 
 jeu_rejoindrePartie:
-    path:    /rejoindrePartie
+    path:    /rejoindrePartie/{id}
     defaults: { _controller: JeuBundle:Jeu:rejoindrePartie }
+    requirements:
+        id: \d+
 
 jeu_accueil:
     path:    /accueil

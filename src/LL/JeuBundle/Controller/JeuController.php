@@ -7,7 +7,6 @@ use LL\JeuBundle\Entity\Joueur;
 use LL\JeuBundle\Entity\Pioche;
 use LL\JeuBundle\Entity\TableJeu;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\BrowserKit\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -15,6 +14,9 @@ class JeuController extends Controller
 {
 
     public function creerPartieAction() {
+        //Verif user pas deja dans une partie
+        $this->verifierJoueurPartie();
+
         //Recup l'entity manager
         $em = $this->getDoctrine()->getManager();
 
@@ -26,31 +28,46 @@ class JeuController extends Controller
 
         //Construction d'un joueur
         $joueur = $this->construireJoueur($em, $table);
-        $joueur->setOrdreDePassage(1);
 
         //On genere l'url de la partie de id table
         $url = $this->generateUrl('jeu_partie', array('id' => $table->getId()));
         return $this->redirect($url);
     }
 
-    public function rejoindrePartieAction(){
+    public function rejoindrePartieAction($id){
         //Recup l'entity manager
         $em = $this->getDoctrine()->getManager();
-        //Recuperation d'une table non pleine
-        $table = $em
-            ->getRepository('JeuBundle:TableJeu')
-            ->trouverPartie();
 
-        //On creer un joueur
-        $this->construireJoueur($em, $table);
+        $table  = null;
+        if($id == 0) {
+            //Recuperation d'une table non pleine
+            $table = $em
+                ->getRepository('JeuBundle:TableJeu')
+                ->trouverPartie();
+        }else{
+            $table = $em
+                ->getRepository('JeuBundle:TableJeu')
+                ->find($id);
+        }
+        if($table == null) {
+            // flash msg
+            $this->get('session')->getFlashBag()->add('error', "La table $id n'existe pas");
+            // some redirection e. g. to referer
+            return $this->redirectToRoute('jeu_accueil');
+        }else {
 
-        //incr�mente le nombre de joueur dans la table
-        $table->setNbJoueur($table->getNbJoueur()+1);
-        $em->flush();
+            //incr�mente le nombre de joueur dans la table
+            $table->setNbJoueur($table->getNbJoueur() + 1);
 
-        //On genere l'url de la partie de id table
-        $url = $this->generateUrl('jeu_partie', array('id' => $table->getId()));
-        return $this->redirect($url);
+            //On creer un joueur
+            $this->construireJoueur($em, $table);
+
+            $em->flush();
+
+            //On genere l'url de la partie de id table
+            $url = $this->generateUrl('jeu_partie', array('id' => $table->getId()));
+            return $this->redirect($url);
+        }
     }
 
 
@@ -126,7 +143,7 @@ class JeuController extends Controller
     public function construireTable(ObjectManager $em){
         //Creation de l'entit� table
         $table = new TableJeu();
-        $table->setNbJoueur(0);
+        $table->setNbJoueur(1);
         //le reste est d�fini automatiquement dans le constructeur
 
         //on persite l'entite
@@ -142,7 +159,7 @@ class JeuController extends Controller
         $joueur = new Joueur();
         $usr= $this->get('security.token_storage')->getToken()->getUser();
         $joueur->setEmail($usr->getEmail());
-        $joueur->setOrdreDePassage($table->getNbJoueur()+1);
+        $joueur->setOrdreDePassage($table->getNbJoueur());
         $joueur->setTable($table);
 
         //on persite l'entite
@@ -308,4 +325,37 @@ class JeuController extends Controller
         $url = $this->generateUrl('jeu_partie', array('id' => $id_table));
         return $this->redirect($url);
     }
+    /**
+     * Verifie qu'un utilisateur n'est pas deja joueur dans une partie
+     * si oui on supprime le joueur de l'ancienne partie
+     */
+    public function verifierJoueurPartie(){
+        //Recup l'entity manager
+        $em = $this->getDoctrine()->getManager();
+        /** Cas ou joueur est dejadans une partie mais veut en creer une nouvelle */
+        //Recuperation du user
+        $user = $this->getUser();
+        //On regarde si il existe deja dans la table joueur
+        $joueur = $em
+            ->getRepository('JeuBundle:Joueur')
+            ->findOneBy(array('email' => $user->getEmail()));
+        if($joueur != null){
+            $tabJoueur = array($joueur);
+            $this->supprimerJoueurPartie($tabJoueur);
+        }
+    }
+
+    /**
+     * Supprime les joueurs en parametre
+     * @param $tabJoueur, tableau de joueur
+     */
+    public function supprimerJoueurPartie($tabJoueur){
+        //Recup l'entity manager
+        $em = $this->getDoctrine()->getManager();
+        foreach($tabJoueur as $joueur){
+            $em->remove($joueur);
+            $em->flush();
+        }
+    }
+
 }

@@ -23,7 +23,7 @@ class User extends BaseUser
 
     public function __construct(){
         parent::__construct();
-        $this->roles[0] = 'ROLE_JOUEUR';
+        $this->addRole('ROLE_JOUEUR');
     }
 }
 

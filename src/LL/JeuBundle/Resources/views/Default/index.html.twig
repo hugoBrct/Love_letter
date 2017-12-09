@@ -6,20 +6,35 @@
         <div class="row">
             <h1>Bienvenue sur love letter</h1>
         </div>
+
+        <div class="row">
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-notice">
+                    <h4 class="bg-danger">{{ message }}</h4>
+                </div>
+            {% endfor %}
+        </div>
+
         <div class="row">
             <a title="Creer une partie" class="btn btn-primary btn-lg btn-block" href="{{ path('jeu_creerPartie') }}">Creer une partie</a>
         </div>
         <br>
         <br>
         <div class="row">
+            {{ form_start(form) }}
             <div class="form-group">
-                <label for="usr">ID de la partie à rejoindre:</label>
-                <input type="text" class="form-control" id="usr" placeholder="Laissez vide pour partie aléatoire">
+                {{ form_label(form.idtable, "ID de la partie à rejoindre:") }}
+                {{ form_widget(form.idtable, {'attr': {'class': 'form-control', 'placeholder': 'Laissez vide pour partie aléatoire'} }) }}
             </div>
         </div>
         <div class="row">
-            <a title="Rejoindre une partie" class="btn btn-primary btn-lg btn-block" href="{{ path('jeu_rejoindrePartie') }}">Rejoindre une partie</a>
+            {{ form_widget(form.submit, {'label' : 'Rejoindre une partie', 'attr': {'class': 'btn btn-primary btn-lg btn-block' } }) }}
         </div>
+
+        {{ form_rest(form) }}
+
+        {# Fermeture de la balise <form> du formulaire HTML #}
+        {{ form_end(form) }}
     </div>
 
 {% endblock %}
