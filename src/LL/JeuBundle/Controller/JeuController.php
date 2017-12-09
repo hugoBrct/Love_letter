@@ -33,13 +33,28 @@ class JeuController extends Controller
         return $this->redirect($url);
     }
 
-    public function rejoindrePartieAction(){
+    public function rejoindrePartieAction($id){
         //Recup l'entity manager
         $em = $this->getDoctrine()->getManager();
-        //Recuperation d'une table non pleine
-        $table = $em
-            ->getRepository('JeuBundle:TableJeu')
-            ->trouverPartie();
+
+        $table  = null;
+        if($id == 0) {
+            //Recuperation d'une table non pleine
+            $table = $em
+                ->getRepository('JeuBundle:TableJeu')
+                ->trouverPartie();
+        }else{
+            $table = $em
+                ->getRepository('JeuBundle:TableJeu')
+                ->find($id);
+        }
+        if($table == null) {
+            // flash msg
+            $this->get('session')->getFlashBag()->add('error', "La table $id n'existe pas");
+        }
+
+        // some redirection e. g. to referer
+        return $this->redirectToRoute('jeu_accueil');
 
         //On creer un joueur
         $this->construireJoueur($em, $table);

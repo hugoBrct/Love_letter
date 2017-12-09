@@ -20,7 +20,9 @@ class SecurityController extends Controller
         // Si le visiteur est déjà identifié, on le redirige vers l'accueil
         if ($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
 
-            return $this->render('JeuBundle:Default:index.html.twig');
+            //On genere l'url de la partie de id table
+            $url = $this->generateUrl('jeu_accueil');
+            return $this->redirect($url);
         }
 
         // Le service authentication_utils permet de récupérer le nom d'utilisateur
