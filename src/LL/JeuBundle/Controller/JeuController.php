@@ -7,7 +7,6 @@ use LL\JeuBundle\Entity\Joueur;
 use LL\JeuBundle\Entity\Pioche;
 use LL\JeuBundle\Entity\TableJeu;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\BrowserKit\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -15,6 +14,9 @@ class JeuController extends Controller
 {
 
     public function creerPartieAction() {
+        //Verif user pas deja dans une partie
+        $this->verifierJoueurPartie();
+
         //Recup l'entity manager
         $em = $this->getDoctrine()->getManager();
 
@@ -246,6 +248,39 @@ class JeuController extends Controller
             }
         }
         $em->flush();
+    }
+
+    /**
+     * Verifie qu'un utilisateur n'est pas deja joueur dans une partie
+     * si oui on supprime le joueur de l'ancienne partie
+     */
+    public function verifierJoueurPartie(){
+        //Recup l'entity manager
+        $em = $this->getDoctrine()->getManager();
+        /** Cas ou joueur est dejadans une partie mais veut en creer une nouvelle */
+        //Recuperation du user
+        $user = $this->getUser();
+        //On regarde si il existe deja dans la table joueur
+        $joueur = $em
+            ->getRepository('JeuBundle:Joueur')
+            ->findOneBy(array('email' => $user->getEmail()));
+        if($joueur != null){
+            $tabJoueur = array($joueur);
+            $this->supprimerJoueurPartie($tabJoueur);
+        }
+    }
+
+    /**
+     * Supprime les joueurs en parametre
+     * @param $tabJoueur, tableau de joueur
+     */
+    public function supprimerJoueurPartie($tabJoueur){
+        //Recup l'entity manager
+        $em = $this->getDoctrine()->getManager();
+        foreach($tabJoueur as $joueur){
+            $em->remove($joueur);
+            $em->flush();
+        }
     }
 
 }
