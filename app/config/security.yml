@@ -43,4 +43,4 @@ security:
 
     access_control:
         - { path: ^/user/, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
-        - { path: ^/jeu/, roles: ROLE_JOUEUR, requires_channel: https }
+        - { path: ^/jeu/, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }

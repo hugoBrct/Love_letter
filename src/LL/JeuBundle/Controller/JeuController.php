@@ -26,7 +26,7 @@ class JeuController extends Controller
 
         //Construction d'un joueur
         $joueur = $this->construireJoueur($em, $table);
-
+        $joueur->setOrdreDePassage(1);
 
         //On genere l'url de la partie de id table
         $url = $this->generateUrl('jeu_partie', array('id' => $table->getId()));
@@ -79,14 +79,22 @@ class JeuController extends Controller
             ->recupererListJoueur($table, $joueur);
 
         //Recuperation de la ou les cartes du joueur courant
-        $carte = $em->getRepository('JeuBundle:Pioche')->findBy(array('proprietaire' => $joueur));
+        $carte = $em->getRepository('JeuBundle:Pioche')->findBy(array('proprietaire' => $joueur, 'etat' => 'enMain'));
+
+        //Recuperation des cartes sur la table
+        $tablecarte = $em->getRepository('JeuBundle:Pioche')->findBy(array('table' => $id , 'etat' => 'faceVisible'));
+
+        //Recuperation des cartes deja jouée
+        $cartejouee = $em->getRepository('JeuBundle:Pioche')->findBy(array('table' => $id , 'etat' => 'jouee'));
 
 
         return $this->render('JeuBundle:Partie:partie.html.twig',
             array('table' => $table,
                 'listJoueur' => $listJoueur,
                 'joueur' => $joueur,
-                'carteEnMain' => $carte
+                'carteEnMain' => $carte,
+                'carteTable' => $tablecarte,
+                'carteJouee' => $cartejouee
             )
         );
 
@@ -118,7 +126,7 @@ class JeuController extends Controller
     public function construireTable(ObjectManager $em){
         //Creation de l'entit� table
         $table = new TableJeu();
-        $table->setNbJoueur(1);
+        $table->setNbJoueur(0);
         //le reste est d�fini automatiquement dans le constructeur
 
         //on persite l'entite
@@ -134,8 +142,8 @@ class JeuController extends Controller
         $joueur = new Joueur();
         $usr= $this->get('security.token_storage')->getToken()->getUser();
         $joueur->setEmail($usr->getEmail());
-        $joueur->setTable($table);
         $joueur->setOrdreDePassage($table->getNbJoueur()+1);
+        $joueur->setTable($table);
 
         //on persite l'entite
         $em->persist($joueur);
@@ -231,6 +239,73 @@ class JeuController extends Controller
             }
         }
         $em->flush();
+
+        //On lance le tour
+        $this->lancerTour($idTable);
     }
 
+    public function lancerTour($idTable){
+
+        $em = $this->getDoctrine()->getManager();
+        //On regarde qui est le joueur de ce tour
+        $table = $em
+            ->getRepository('JeuBundle:TableJeu')
+            ->find($idTable);
+
+        $joueur = $em
+            ->getRepository('JeuBundle:Joueur')
+            ->findOneBy(array('table' => $idTable, 'ordreDePassage' => $table->getAQuiLeTour()));
+        //On lui distribu une carte
+        $listCarte = $em->getRepository('JeuBundle:Pioche')->findBy(array('table' => $idTable, 'etat' => 'pioche'));
+        $cartePiochee = array_rand($listCarte);
+        $carte = $listCarte[$cartePiochee];
+        $carte->setEtat('enMain');
+        $carte->setProprietaire($joueur);
+        $em->flush();
+    }
+
+    public function jouerTourAction($id_table, $id_carte){
+        $em = $this->getDoctrine()->getManager();
+        //Recuperation de la table selon l'id en parametre
+        $table = $em
+            ->getRepository('JeuBundle:TableJeu')
+            ->find($id_table);
+        //Recuperation du joueur en fonction de l'id de l'utilisateur
+        $user = $this->getUser();
+        $joueur = $em
+            ->getRepository('JeuBundle:Joueur')
+            ->findOneBy(array('email' => $user->getEmail()));
+
+        //On vérifie que c'était bien au tour de l'utilisateur de jouer
+        if($table->getAQuiLeTour() != ($joueur->getOrdreDePassage())) {
+            //C'est pas a nous de jouer
+            $url = $this->generateUrl('jeu_partie', array('id' => $id_table));
+            return $this->redirect($url);
+        }
+        //On s'assure qu'il a bien la carte qu'il essaie de jouer
+        $carte = $em->getRepository('JeuBundle:Pioche')->findOneBy(array('proprietaire' => $joueur, 'carte' => $id_carte));
+        if($carte == null){
+            //La carte qu'on essaie de jouer n'est pas en notre possession
+            $url = $this->generateUrl('jeu_partie', array('id' => $id_table));
+            return $this->redirect($url);
+        }
+        //On dépose sa carte sur la table
+        $carte->setEtat('jouee');
+        //On fait passer le tour au suivant (ou a la manche suivante au cas ou)
+
+        if($table->getNbJoueur() == ($table->getAQuiLeTour())){
+            $table->setAQuiLeTour('1');
+        }
+        else{
+            $table->setAQuiLeTour($table->getAQuiLeTour() + 1);
+        }
+        //on flush
+        $em->flush();
+
+        $this->lancerTour($id_table);
+
+        //On genere l'url de la partie de id table
+        $url = $this->generateUrl('jeu_partie', array('id' => $id_table));
+        return $this->redirect($url);
+    }
 }

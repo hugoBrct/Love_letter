@@ -166,4 +166,11 @@ class Joueur
     {
         return $this->table;
     }
+
+    /**
+     * @return string
+     */
+    public function getIdString(){
+        return "$this->id";
+    }
 }

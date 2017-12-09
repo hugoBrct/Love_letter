@@ -1,6 +1,15 @@
 html {
     background-image: url("../autre_images/background.jpg");
     z-index: -1;
+    height: 100%;
+}
+
+body {
+    height: 100%;
+}
+
+.navbar{
+    margin: 0;
 }
 
 .partie_en_attente {
@@ -29,16 +38,116 @@ html {
     text-align: center;
 }
 
-.main_joueur {
-    background-color: blue;
-    position: absolute;
-    bottom: 0;
-    height: 300px;
-    width: 50%;
-    margin: 0 auto;
-    display: inline-block;
+
+.autres_joueurs {
+    border : solid 1px black;
+    display:flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    align-content: flex-start;
+    align-items: flex-start;
+    height : 35%;
 }
 
-.main_joueur  img {
+
+.autre_joueur {
+    padding:20px;
+    background-color: #333333;
+    text-align: center;
+    color: #9d9d9d;
     height: 100%;
+}
+
+.carte_autre_joueur{
+    height: 100%;
+    display:flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    align-content: flex-start;
+    align-items: flex-start;
+    position: relative;
+}
+
+.carte_autre_joueur img {
+    border-radius: 5px;
+    border: solid 1px grey;
+    position: absolute;
+    height: 70%;
+    -moz-transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
+}
+.carte_autre_joueur img:hover {
+    -moz-transform: scale(1.5);
+    -webkit-transform: scale(1.5);
+    transform: scale(1.5);
+}
+
+.tapis {
+    height: 30%;
+    width: 100%;
+}
+
+
+.carte_visible {
+    display:inline-flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
+.carte_table{
+    height: 70%;
+}
+
+.carte_table img{
+    height: 100%;
+    border-radius: 5px;
+    margin: 0 10px 0 10px;
+    -moz-transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
+}
+.carte_table img:hover {
+    -moz-transform: scale(1.5);
+    -webkit-transform: scale(1.5);
+    transform: scale(1.5);
+}
+
+
+.main_joueur {
+    border : solid 1px black;
+    display:flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    height : 27%;
+}
+
+.carte_joueur {
+    height: 90%;
+}
+
+.carte_joueur img {
+    height: 100%;
+    max-width: 100%;
+    border-radius: 5px;
+    margin: 0 10px 0 10px;
+    -moz-transition: all 0.3s;
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
+}
+
+.carte_joueur img:hover {
+    -moz-transform: scale(2);
+    -webkit-transform: scale(2);
+    transform: translateZ(2px) translateY(-9em) scale(2);
 }

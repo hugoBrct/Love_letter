@@ -27,11 +27,55 @@
             </div>
         </div>
     {% else %}
+        {#On place les autres joueurs en haut de l'écran#}
+        <div class="autres_joueurs">
+            {% for joueur in listJoueur %}
+                <div class="autre_joueur">
+                    {% if  joueur.ordreDePassage  == table.aQuiLeTour %}
+                        <h4 style="color:green">Joueur : {{ joueur.email }}</h4>
+                        <p>Points : {{ joueur.score }}</p>
+                    {% else %}
+                        <h4>Joueur : {{ joueur.email }}</h4>
+                        <p>Points : {{ joueur.score }}</p>
+                    {% endif %}
+                    <div class="carte_autre_joueur">
+                    {% for carte in carteJouee %}
+                        {% if  carte.proprietaire.id  == joueur.id %}
+                            <img src="{{ asset('skin_cartes/') }}{{ carte.carte.img }}">
+                        {% endif %}
+                    {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="tapis">
+            <span class="carte_visible">
+                    {% for carte in carteTable %}
+                        <div class="carte_table">
+                            <img src="{{ asset('skin_cartes/') }}{{ carte.carte.img }}">
+                        </div>
+                    {% endfor %}
+            </span>
+
+        </div>
         {#On place les cartes dans notre main (en bas de l'écran)#}
         <div class="main_joueur">
-            {% for carte in carteEnMain %}
-                <img src="{{ asset('skin_cartes/') }}{{ carte.carte.img }}">
-            {% endfor %}
+            {% if  joueur.ordreDePassage  == table.aQuiLeTour %}
+                {% for carte in carteEnMain %}
+                    <div class="carte_joueur">
+                        <a href="{{ path('jeu_jouer', {'id_table' : table.id, 'id_carte' : carte.id}) }}">
+                            <img src="{{ asset('skin_cartes/') }}{{ carte.carte.img }}">
+                        </a>
+                    </div>
+                {% endfor %}
+            {% else %}
+                {% for carte in carteEnMain %}
+                    <div class="carte_joueur">
+                        <img src="{{ asset('skin_cartes/') }}{{ carte.carte.img }}">
+                    </div>
+                {% endfor %}
+            {% endif %}
         </div>
     {% endif %}
 

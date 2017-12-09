@@ -27,3 +27,7 @@ jeu_lancerPartie:
     defaults: { _controller: JeuBundle:Jeu:lancerPartie }
     requirements:
             id: \d+
+
+jeu_jouer:
+    path: /jouer/{id_table}/{id_carte}
+    defaults: { _controller: JeuBundle:Jeu:jouerTour}
