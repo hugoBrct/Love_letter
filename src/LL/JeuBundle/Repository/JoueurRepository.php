@@ -13,19 +13,18 @@ use LL\JeuBundle\Entity\TableJeu;
 class JoueurRepository extends \Doctrine\ORM\EntityRepository
 {
 
-    public function recupererListJoueur(TableJeu $table, Joueur $joueur){
+    public function recupererListJoueur(TableJeu $table, Joueur $joueur)
+    {
         // On récupère les joueurs a la table
         $qb = $this->createQueryBuilder('j');
 
         $qb->where('j.id != :joueur')
             ->setParameter('joueur', $joueur->getId())
             ->andWhere('j.table = :table')
-            ->setParameter('table', $table->getId())
-        ;
+            ->setParameter('table', $table->getId());
 
         return $listJoueur = $qb
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 }

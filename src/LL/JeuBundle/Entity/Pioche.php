@@ -31,6 +31,7 @@ class Pioche
     /**
      * @ORM\ManyToOne(targetEntity="LL\JeuBundle\Entity\TableJeu")
      * @ORM\JoinColumn(nullable=false)
+     * @ORM\joinColumn(onDelete="SET NULL")
      */
     private $table;
 

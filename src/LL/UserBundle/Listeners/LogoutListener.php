@@ -38,14 +38,27 @@ class LogoutListener implements LogoutHandlerInterface {
         //on recupere la table
         $table = $joueur->getTable();
 
+        //on recupere les joueurs
+        $joueurs = $this->em
+            ->getRepository('JeuBundle:Joueur')
+            ->recupererListJoueur($table, $joueur);
+
+        //on recupere la pioche
+        $pioche = $this->em
+            ->getRepository('JeuBundle:Pioche')
+            ->findBy(array('table' => $table));
+
         $this->em->remove($joueur);
+        $this->em->remove($table);
+        foreach($joueurs as $j){
+            $this->em->remove($j);
+        }
+        foreach($pioche as $c){
+            $this->em->remove($c);
+        }
+
+
         $this->em->flush();
-
-
-        // The following example will create the logout.txt file in the /web directory of your project
-        $myfile = fopen("logout.txt", "w");
-        fwrite($myfile, 'logout succesfully executed !');
-        fclose($myfile);
     }
 
 }
