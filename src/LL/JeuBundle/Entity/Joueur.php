@@ -28,6 +28,7 @@ class Joueur
      */
     private $email;
 
+
     /**
      * @var int
      *
@@ -40,6 +41,15 @@ class Joueur
      * @ORM\JoinColumn(nullable=false)
      */
     private $table;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="etat", type="string", length=255)
+     */
+    private $etat;
+
+
 
 
 
@@ -173,4 +183,21 @@ class Joueur
     public function getIdString(){
         return "$this->id";
     }
+
+    /**
+     * @return string
+     */
+    public function getEtat()
+    {
+        return $this->etat;
+    }
+
+    /**
+     * @param string $etat
+     */
+    public function setEtat($etat)
+    {
+        $this->etat = $etat;
+    }
+
 }

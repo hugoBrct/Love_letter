@@ -1,0 +1,49 @@
+{% block modal %}
+
+    <div class="modal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{{ path('jeu_appliquerEffet') }}" method="POST">
+                    <div class="modal-header">
+                        <h3 style="text-align: center" class="modal-title">Vous venez de jouer la carte {{ effet }}</h3>
+                    </div>
+                    <div class="modal-body">
+                        <input style="display: none" type="text" name="carte" value="{{ effet }}"><br>
+                        <input style="display: none" type="text" name="id_table" value="{{ table.id }}"><br>
+                        {% if effet == 'baron' or effet == 'garde' or effet == 'pretre' or effet == 'prince' or effet == 'roi'  %}
+                            <label for="cible">Choisissez la cible de cette carte</label>
+                            <select class="form-control" name="cible">
+                                <option disabled selected value> -- choisissez une cible -- </option>
+                                {% for joueur in listJoueur %}
+                                    {% if joueur.etat != 'immunise' %}
+                                        <option value="{{ joueur.id }}">{{ joueur.email }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if effet == 'prince' %}
+                                    <option value="{{ joueur.id }}">{{ joueur.email }}</option>
+                                {% endif %}
+                            </select>
+                        {% endif %}
+                        {% if effet == 'garde' %}
+                            <label for="devinecarte">Devinez la carte de l'adversaire</label>
+                            <select class="form-control" name="devinecarte">
+                                <option value="pretre">Pretre</option>
+                                <option value="baron">Baron</option>
+                                <option value="servante">Servante</option>
+                                <option value="prince">Prince</option>
+                                <option value="roi">Roi</option>
+                                <option value="comtesse">Comtesse</option>
+                                <option value="princesse">Princesse</option>
+                            </select>
+                        {% endif %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" > Confirmer! </button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

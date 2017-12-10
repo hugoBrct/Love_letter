@@ -56,7 +56,7 @@ class TableJeu
         $this->tour = 0;
         $this->etat = 'en attente d\'autre joueur';
         $this->aQuiLeTour = 1;
-        $this->manche = 1;
+        $this->manche = 0;
         $this->nbJoueur = 0;
     }
 

@@ -1,6 +1,9 @@
 {% extends '::squelette.html.twig' %}
 
 {% block jeu %}
+
+
+
     {% if table.etat == "en attente d'autre joueur" %}
         <div class="partie_en_attente container">
             <h1>Partie {{ table.id }}</h1>
@@ -27,6 +30,14 @@
             </div>
         </div>
     {% else %}
+        {#Message d'information (aquiletour, Effet) #}
+        {% for label, flashes in app.session.flashbag.all %}
+            {% for flash in flashes %}
+                <div class="alert alert-{{ label }}">
+                    {{ flash }}
+                </div>
+            {% endfor %}
+        {% endfor %}
         {#On place les autres joueurs en haut de l'écran#}
         <div class="autres_joueurs">
             {% for joueur in listJoueur %}
@@ -39,9 +50,11 @@
                         <p>Points : {{ joueur.score }}</p>
                     {% endif %}
                     <div class="carte_autre_joueur">
+                    {% set foo = -20 %}
                     {% for carte in carteJouee %}
                         {% if  carte.proprietaire.id  == joueur.id %}
-                            <img src="{{ asset('skin_cartes/') }}{{ carte.carte.img }}">
+                            <img src="{{ asset('skin_cartes/') }}{{ carte.carte.img }}" style = "right: {{ foo }}px">
+                            {% set foo = foo + 20 %}
                         {% endif %}
                     {% endfor %}
                     </div>
@@ -56,6 +69,14 @@
                             <img src="{{ asset('skin_cartes/') }}{{ carte.carte.img }}">
                         </div>
                     {% endfor %}
+                    {% for carte in carteJouee %}
+                        {% if  carte.proprietaire.id  == joueur.id %}
+                            <div class="carte_table">
+                                <img src="{{ asset('skin_cartes/') }}{{ carte.carte.img }}">
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+
             </span>
 
         </div>
@@ -79,27 +100,29 @@
         </div>
     {% endif %}
 
-    {#<script type="text/javascript">
-        var interval = 10000;
-        function load() {
-            setTimeout(function () {
-                $.ajax({
-                    url: "{{ path('jeu_refreshPartie') }}",
-                    method: "post",
-                    complete: load,
-                    data: "id=" + {{ table.id }}
-                }).done(function (msg) {
-                    window.location.reload();
-                });
-            }, interval);
-        }
-        load();
-    </script>#}
+    {% if  joueur.ordreDePassage  != table.aQuiLeTour %}
     <script>
         var interval = 3000;
         setTimeout(function () {
             window.location.reload();
         },interval);
     </script>
+    {% else %}
+    <script>
+        window.setTimeout(function() {
+        $(".alert-success").fadeTo(1500, 0).slideUp(500, function(){
+        $(this).remove();
+        });
+        }, 3000);
+    </script>
+    {% endif %}
 
+    {% if effet is defined %}
+        <script type="text/javascript">
+            $(window).on('load',function(){
+                $('.modal').modal('show');
+            });
+        </script>
+        {% include 'modal.html.twig' %}
+    {% endif %}
 {% endblock %}

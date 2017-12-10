@@ -2,17 +2,24 @@ jeu_creerPartie:
     path:    /creationPartie
     defaults: { _controller: JeuBundle:Jeu:creerPartie }
 
+
+jeu_effet:
+    path:    /partie/{id}/{effet}
+    defaults: { _controller: JeuBundle:Jeu:afficherPartieEffet }
+
 jeu_partie:
     path:    /partie/{id}
     defaults: { _controller: JeuBundle:Jeu:afficherPartie }
     requirements:
         id: \d+
 
+
 jeu_rejoindrePartie:
     path:    /rejoindrePartie/{id}
     defaults: { _controller: JeuBundle:Jeu:rejoindrePartie }
     requirements:
         id: \d+
+
 
 jeu_accueil:
     path:    /accueil
@@ -33,3 +40,7 @@ jeu_lancerPartie:
 jeu_jouer:
     path: /jouer/{id_table}/{id_carte}
     defaults: { _controller: JeuBundle:Jeu:jouerTour}
+
+jeu_appliquerEffet:
+    path: /appliquerEffet
+    defaults: { _controller: JeuBundle:Jeu:appliquerEffet }
