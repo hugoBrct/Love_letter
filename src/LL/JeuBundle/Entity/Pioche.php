@@ -31,11 +31,13 @@ class Pioche
     /**
      * @ORM\ManyToOne(targetEntity="LL\JeuBundle\Entity\TableJeu")
      * @ORM\JoinColumn(nullable=false)
+     * @ORM\joinColumn(onDelete="SET NULL")
      */
     private $table;
 
     /**
      * @ORM\ManyToOne(targetEntity="LL\JeuBundle\Entity\Joueur")
+     * @ORM\joinColumn(onDelete="SET NULL")
      */
     private $proprietaire;
 

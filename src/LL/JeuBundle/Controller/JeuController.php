@@ -235,22 +235,31 @@ class JeuController extends Controller
     }
 
     public function lancerPartieAction($id){
-
         $em = $this->getDoctrine()->getManager();
-
-        //On s'assure qu'au moins deux joueurs sont présents TODO
-        //On change l'etat de la partie
         $partie = $em->getRepository('JeuBundle:TableJeu')->find($id);
-        $partie->setEtat("Ferme");
+        $nbJoueur = $partie->getNbJoueur();
 
-        $em->flush();
+        if($nbJoueur >=2){
 
-        //On lance la manche
-        $this->lancerManche($id);
+            //On s'assure qu'au moins deux joueurs sont présents TODO
 
-        //On genere l'url de la partie de id table
-        $url = $this->generateUrl('jeu_partie', array('id' => $id));
-        return $this->redirect($url);
+            //On change l'etat de la partie
+            $partie = $em->getRepository('JeuBundle:TableJeu')->find($id);
+            $partie->setEtat("Ferme");
+
+            $em->flush();
+
+            //On lance la manche
+            $this->lancerManche($id);
+
+            //On genere l'url de la partie de id table
+            $url = $this->generateUrl('jeu_partie', array('id' => $id));
+            return $this->redirect($url);
+        }else{
+            //On genere l'url de la partie de id table
+            $url = $this->generateUrl('jeu_partie', array('id' => $id));
+            return $this->redirect($url);
+        }
     }
 
     public function lancerManche($idTable){

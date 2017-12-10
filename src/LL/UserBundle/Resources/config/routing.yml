@@ -1,10 +1,14 @@
 ll_user_homepage:
-    path:     /
+    path: /
     defaults: { _controller: AppBundle:Default:index }
+
+user_deconnexion:
+    path: /deconnexion
+    defaults: { _controller: LLUserBundle:Default:deconnexion }
 
 
 login:
-    path : /login
+    path: /login
     defaults:
         _controller: LLUserBundle:Security:login
 
@@ -13,8 +17,6 @@ login_check:
 
 logout:
     path: /logout
-    defaults: { _controller: LLUserBundle:Security:logout}
-
 
 
 # app/config/routing.yml
