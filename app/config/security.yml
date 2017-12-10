@@ -22,26 +22,32 @@ security:
             security: false
 
         main:
+            http_basic: ~
             pattern:      ^/
-            anonymous:    true
+            anonymous: ~
             form_login:
                 login_path: login
                 check_path: login_check
                  # login success redirecting options (read further below)
                 always_use_default_target_path: true
                 default_target_path:            /jeu/accueil
+            # ...
             logout:
-                path:       logout
-                target:     login
+                path:   logout
+                target: login
+                handlers: [userBundle_logoutlistener]
+
+
+
             remember_me:
                 secret: %secret%
-            # activate different ways to authenticate
+                # activate different ways to authenticate
 
-            # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
-            #http_basic: ~
+                # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
+                #http_basic: ~
 
-            # https://symfony.com/doc/current/security/form_login_setup.html
-            #form_login: ~
+                # https://symfony.com/doc/current/security/form_login_setup.html
+                #form_login: ~
 
     access_control:
         - { path: ^/user/, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }

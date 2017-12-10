@@ -36,6 +36,7 @@ class Pioche
 
     /**
      * @ORM\ManyToOne(targetEntity="LL\JeuBundle\Entity\Joueur")
+     * @ORM\joinColumn(onDelete="SET NULL")
      */
     private $proprietaire;
 

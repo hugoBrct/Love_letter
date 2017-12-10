@@ -4,6 +4,11 @@ parameters:
     #parameter_name: value
 
 services:
+    userBundle_logoutlistener:
+        class: LL\UserBundle\Listeners\LogoutListener
+        arguments: ['@service_container', '@doctrine.orm.entity_manager']
+
+
     # default configuration for services in *this* file
     _defaults:
         # automatically injects dependencies in your services
@@ -33,3 +38,4 @@ services:
     # AppBundle\Service\ExampleService:
     #     arguments:
     #         $someArgument: 'some_value'
+
