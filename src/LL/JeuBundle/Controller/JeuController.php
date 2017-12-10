@@ -272,13 +272,28 @@ class JeuController extends Controller
         $joueur = $em
             ->getRepository('JeuBundle:Joueur')
             ->findOneBy(array('table' => $idTable, 'ordreDePassage' => $table->getAQuiLeTour()));
+
         //On lui distribu une carte
         $listCarte = $em->getRepository('JeuBundle:Pioche')->findBy(array('table' => $idTable, 'etat' => 'pioche'));
-        $cartePiochee = array_rand($listCarte);
-        $carte = $listCarte[$cartePiochee];
-        $carte->setEtat('enMain');
-        $carte->setProprietaire($joueur);
-        $em->flush();
+
+        //Si il ne reste plus de carte, alors on déclanche une fin de manche
+        if(!$listCarte) {
+            //On recupère le propriétaire de la carte la plus forte
+            $array = $em->getRepository('JeuBundle:Pioche')->recupererCartePlusForte($idTable);
+            foreach($array["gagnant"] as $gagnant){
+                $gagnant->setScore($array["points"]);
+            }
+            //On change de manche
+            $this->lancerManche($idTable);
+
+        }else{
+            //Sinon on continu de distribuer
+            $cartePiochee = array_rand($listCarte);
+            $carte = $listCarte[$cartePiochee];
+            $carte->setEtat('enMain');
+            $carte->setProprietaire($joueur);
+            $em->flush();
+        }
     }
 
     public function jouerTourAction($id_table, $id_carte){

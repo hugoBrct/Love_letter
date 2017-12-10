@@ -34,4 +34,30 @@ class PiocheRepository extends \Doctrine\ORM\EntityRepository
             ->getResult()
             ;
     }
+
+    public function recupererCartePlusForte($id){
+        //Recupere toutes les cartes en main
+        $listCarte = $this->findBy(array('table' => $id, 'etat' => 'enMain'));
+        $max = 0;
+        $array = array(
+          "gagnant" => array(), "points" => $max
+        );
+        foreach ($listCarte as $carte){
+            $vraicarte = $carte->getCarte();
+            if($vraicarte->getPoint() > $max){
+                $max = $vraicarte->getPoint();
+                //On vide la liste des joueurs gagnant
+                $array = array(
+                    "gagnant" => array(), "points" => $max
+                );
+                //On ajoute ce joueur
+                $array["gagnant"][] = $carte->getProprietaire();
+            }
+            elseif ($vraicarte->getPoint() == $max){
+                //On l'ajoute a la liste de joueur gagnant
+                $array["gagnant"][] = $carte->getProprietaire();
+            }
+        }
+        return $array;
+    }
 }
