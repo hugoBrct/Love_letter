@@ -332,6 +332,26 @@ class JeuController extends Controller
     public function lancerTour($idTable){
 
         $em = $this->getDoctrine()->getManager();
+
+        //Si il ne reste plus assez de joueur, on déclanche une fin de manche
+        $listJoueur = $em
+            ->getRepository('JeuBundle:Joueur')
+            ->findBy(array('etat' => array('joue','immunise')));
+
+        if(count($listJoueur)<2) {
+            $this->finDeManche($idTable);
+            return 0;
+        }
+
+
+        //On récupère les cartes encore disponibles
+        $listCarte = $em->getRepository('JeuBundle:Pioche')->findBy(array('table' => $idTable, 'etat' => 'pioche'));
+        //Si il ne reste plus de carte, alors on déclanche une fin de manche
+        if(!$listCarte) {
+            $this->finDeManche($idTable);
+            return 0;
+        }
+
         //On regarde qui est le joueur de ce tour
         $table = $em
             ->getRepository('JeuBundle:TableJeu')
@@ -358,29 +378,14 @@ class JeuController extends Controller
         if($joueur->getEtat() == 'immunise')
             $joueur->setEtat('joue');
 
+        //On lui donne une carte
+        //Sinon on continu de distribuer
+        $cartePiochee = array_rand($listCarte);
+        $carte = $listCarte[$cartePiochee];
+        $carte->setEtat('enMain');
+        $carte->setProprietaire($joueur);
+        $em->flush();
 
-        //Si il ne reste plus assez de joueur, on déclanche une fin de manche
-        $listJoueur = $em
-            ->getRepository('JeuBundle:Joueur')
-            ->findBy(array('etat' => array('joue','immunise')));
-
-        if(count($listJoueur)<2){
-            $this->finDeManche($idTable);
-        }
-
-        //On récupère les cartes encore disponibles
-        $listCarte = $em->getRepository('JeuBundle:Pioche')->findBy(array('table' => $idTable, 'etat' => 'pioche'));
-        //Si il ne reste plus de carte, alors on déclanche une fin de manche
-        if(!$listCarte) {
-            $this->finDeManche($idTable);
-        }else{
-            //Sinon on continu de distribuer
-            $cartePiochee = array_rand($listCarte);
-            $carte = $listCarte[$cartePiochee];
-            $carte->setEtat('enMain');
-            $carte->setProprietaire($joueur);
-            $em->flush();
-        }
     }
 
     public function finDeManche($idTable){
@@ -445,6 +450,8 @@ class JeuController extends Controller
             //Si la carte est la servante, on applique l'effet
             if($carte->getNom() == "servante")
                 $this->effetServante($id_table,$joueur);
+            if($carte->getNom() == "princesse")
+                $this->effetPrincesse($id_table,$joueur);
             //Si tout se passe bien, on fait passer le tour et on affiche
             if($table->getNbJoueur() == ($table->getAQuiLeTour())){
                 $table->setAQuiLeTour('1');
@@ -579,17 +586,23 @@ class JeuController extends Controller
             //On change l'état de l'utilisateur a éliminé
             $adversaire->setEtat('elimine');
         }
+        $em->flush();
         //Sinon il se passe rien...
 
     }
 
     public function effetPretre($id_table, $joueur, $cible){
-        //On affiche un message avec une image dedans ??
+        $em = $this->getDoctrine()->getManager();
+        $carteCible = $em
+            ->getRepository('JeuBundle:Pioche')
+            ->findOneBy(array('proprietaire' => $cible));
+        $this->addFlash("success",$carteCible->getCarte()->getNom() );
     }
 
     public function effetServante($id_table, $joueur){
         //On change l'etat du joueur a "immunisé"
         $joueur->setEtat('immunise');
+
     }
 
     public function effetBaron($id_table, $joueur, $cible){
@@ -613,6 +626,8 @@ class JeuController extends Controller
             $carteCible->setEtat('jouee');
             $adversaire->setEtat('elimine');
         }
+
+        $em->flush();
 
     }
 
@@ -658,6 +673,17 @@ class JeuController extends Controller
         $carteCible->setProprietaire($joueur);
         $carteJoueur->setProprietaire($adversaire);
 
+        $em->flush();
+
+    }
+
+    public function effetPrincesse($id_table, $joueur){
+        $em = $this->getDoctrine()->getManager();
+        $carteJoueur = $em
+            ->getRepository('JeuBundle:Pioche')
+            ->findOneBy(array('proprietaire' => $joueur->getId()));
+        $carteJoueur->setEtat('jouee');
+        $joueur->setEtat('elimine');
     }
 
 }
