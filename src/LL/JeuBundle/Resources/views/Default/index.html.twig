@@ -2,17 +2,19 @@
 {% extends '::squelette.html.twig' %}
 
 {% block accueil %}
+    <div class="row">
+        {#Message d'information (aquiletour, Effet) #}
+        {% for label, flashes in app.session.flashbag.all %}
+            {% for flash in flashes %}
+                <div class="alert alert-{{ label }}">
+                    {{ flash }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+    </div>
     <div class=" bienvenue container">
         <div class="row">
             <h1>Bienvenue sur love letter</h1>
-        </div>
-
-        <div class="row">
-            {% for message in app.flashes('error') %}
-                <div class="alert alert-notice">
-                    <h4 class="bg-danger">{{ message }}</h4>
-                </div>
-            {% endfor %}
         </div>
 
         <div class="row">
