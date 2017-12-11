@@ -60,6 +60,7 @@ class JeuController extends Controller
             // some redirection e. g. to referer
             return $this->redirectToRoute('jeu_accueil');
         }else {
+            $this->verifierJoueurPartie();
 
             //incr�mente le nombre de joueur dans la table
             $table->setNbJoueur($table->getNbJoueur() + 1);
@@ -75,7 +76,8 @@ class JeuController extends Controller
         }
     }
 
-    public function afficherPartieAction($id){
+    public function afficherPartieAction($id)
+    {
 
         $em = $this->getDoctrine()->getManager();
 
@@ -84,44 +86,51 @@ class JeuController extends Controller
             ->getRepository('JeuBundle:TableJeu')
             ->find($id);
 
+        if ($table == null) {
+            $this->addFlash('warning', "Un joueur s'est déconnecté");
+            //Cas partie supprimé
+            $url = $this->generateUrl('jeu_accueil');
+            return $this->redirect($url);
+        } else {
 
-        //Recuperattion du user
-        $user = $this->getUser();
 
-        //Recuperation du joueur courant
-        $joueur = $em
-            ->getRepository('JeuBundle:Joueur')
-            ->findOneBy(array('email' => $user->getEmail()));
+            //Recuperattion du user
+            $user = $this->getUser();
 
-        // On récupère les joueurs a la table
-        $listJoueur = $em
-            ->getRepository('JeuBundle:Joueur')
-            ->recupererListJoueur($table, $joueur);
+            //Recuperation du joueur courant
+            $joueur = $em
+                ->getRepository('JeuBundle:Joueur')
+                ->findOneBy(array('email' => $user->getEmail()));
 
-        //Recuperation de la ou les cartes du joueur courant
-        $carte = $em->getRepository('JeuBundle:Pioche')->findBy(array('proprietaire' => $joueur, 'etat' => 'enMain'));
+            // On récupère les joueurs a la table
+            $listJoueur = $em
+                ->getRepository('JeuBundle:Joueur')
+                ->recupererListJoueur($table, $joueur);
 
-        //Recuperation des cartes sur la table
-        $tablecarte = $em->getRepository('JeuBundle:Pioche')->findBy(array('table' => $id , 'etat' => 'faceVisible'));
+            //Recuperation de la ou les cartes du joueur courant
+            $carte = $em->getRepository('JeuBundle:Pioche')->findBy(array('proprietaire' => $joueur, 'etat' => 'enMain'));
 
-        //Recuperation des cartes deja jouée
-        $cartejouee = $em->getRepository('JeuBundle:Pioche')->findBy(array('table' => $id , 'etat' => 'jouee'));
+            //Recuperation des cartes sur la table
+            $tablecarte = $em->getRepository('JeuBundle:Pioche')->findBy(array('table' => $id, 'etat' => 'faceVisible'));
 
-        //On affiche un message a l'utilisateur si c'est son tour
-        if($joueur->getOrdreDePassage() == $table->getAQuiLeTour()){
-            $this->addFlash("success", "A toi de jouer!");
+            //Recuperation des cartes deja jouée
+            $cartejouee = $em->getRepository('JeuBundle:Pioche')->findBy(array('table' => $id, 'etat' => 'jouee'));
+
+            //On affiche un message a l'utilisateur si c'est son tour
+            if ($joueur->getOrdreDePassage() == $table->getAQuiLeTour()) {
+                $this->addFlash("success", "A toi de jouer!");
+            }
+
+            return $this->render('JeuBundle:Partie:partie.html.twig',
+                array('table' => $table,
+                    'listJoueur' => $listJoueur,
+                    'joueur' => $joueur,
+                    'carteEnMain' => $carte,
+                    'carteTable' => $tablecarte,
+                    'carteJouee' => $cartejouee
+                )
+            );
         }
-
-        return $this->render('JeuBundle:Partie:partie.html.twig',
-            array('table' => $table,
-                'listJoueur' => $listJoueur,
-                'joueur' => $joueur,
-                'carteEnMain' => $carte,
-                'carteTable' => $tablecarte,
-                'carteJouee' => $cartejouee
-            )
-        );
-
     }
 
     public function afficherPartieEffetAction($id, $effet){
@@ -486,17 +495,37 @@ class JeuController extends Controller
             ->getRepository('JeuBundle:Joueur')
             ->findOneBy(array('email' => $user->getEmail()));
         if($joueur != null){
-            $tabJoueur = array($joueur);
-            $this->supprimerJoueurPartie($tabJoueur);
+            $this->supprimerPartie($joueur);
         }
     }
 
-    public function supprimerJoueurPartie($tabJoueur){
+    public function supprimerPartie($joueur){
         //Recup l'entity manager
         $em = $this->getDoctrine()->getManager();
-        foreach($tabJoueur as $joueur){
+
+        //Si il est dans une partie on supprime la partie (mais sinon non...)
+        if($joueur) {
+            //on recupere la table
+            $table = $joueur->getTable();
+
+            //on recupere les joueurs
+            $joueurs = $em
+                ->getRepository('JeuBundle:Joueur')
+                ->recupererListJoueur($table, $joueur);
+
+            //on recupere la pioche
+            $pioche = $em
+                ->getRepository('JeuBundle:Pioche')
+                ->findBy(array('table' => $table));
+
             $em->remove($joueur);
-            $em->flush();
+            $em->remove($table);
+            foreach ($joueurs as $j) {
+                $em->remove($j);
+            }
+            foreach ($pioche as $c) {
+                $em->remove($c);
+            }
         }
     }
 
