@@ -268,6 +268,7 @@ class JeuController extends Controller
         //On incremente la manche
         $table = $em->getRepository('JeuBundle:TableJeu')->find($idTable);
         $table->setManche($table->getManche() + 1);
+        $table->setAQuiLeTour(1);
 
         //reinitialisation de toutes les cartes dans la pioche
         $listCarte = $em->getRepository('JeuBundle:Pioche')->findBy(array('table' => $idTable));
@@ -340,10 +341,7 @@ class JeuController extends Controller
             ->getRepository('JeuBundle:Joueur')
             ->findOneBy(array('table' => $idTable, 'ordreDePassage' => $table->getAQuiLeTour()));
 
-        //On enlève son immunité
-        $joueur->setEtat('joue');
-
-        //Si le joueur qu'on a choisit, on avance le tour de la table
+        //Si le joueur qu'on a choisit est éliminé , on avance le tour de la table
         while($joueur->getEtat() == 'elimine'){
             if($table->getNbJoueur() == ($table->getAQuiLeTour())){
                 $table->setAQuiLeTour('1');
@@ -356,8 +354,10 @@ class JeuController extends Controller
                 ->findOneBy(array('table' => $idTable, 'ordreDePassage' => $table->getAQuiLeTour()));
         }
 
-        //On lui distribu une carte
-        $listCarte = $em->getRepository('JeuBundle:Pioche')->findBy(array('table' => $idTable, 'etat' => 'pioche'));
+        //On enlève son immunité
+        if($joueur->getEtat() == 'immunise')
+            $joueur->setEtat('joue');
+
 
         //Si il ne reste plus assez de joueur, on déclanche une fin de manche
         $listJoueur = $em
@@ -367,6 +367,9 @@ class JeuController extends Controller
         if(count($listJoueur)<2){
             $this->finDeManche($idTable);
         }
+
+        //On récupère les cartes encore disponibles
+        $listCarte = $em->getRepository('JeuBundle:Pioche')->findBy(array('table' => $idTable, 'etat' => 'pioche'));
         //Si il ne reste plus de carte, alors on déclanche une fin de manche
         if(!$listCarte) {
             $this->finDeManche($idTable);
@@ -385,7 +388,7 @@ class JeuController extends Controller
         //On recupère le propriétaire de la carte la plus forte
         $array = $em->getRepository('JeuBundle:Pioche')->recupererCartePlusForte($idTable);
         foreach($array["gagnant"] as $gagnant){
-            $gagnant->setScore($gagnant->getScore() + $array["points"]);
+            $gagnant->setScore($gagnant->getScore()+1);
         }
         //On regarde si on a un vainqueur
         //On change de manche
@@ -395,6 +398,9 @@ class JeuController extends Controller
     public function jouerTourAction($id_table, $id_carte){
         $em = $this->getDoctrine()->getManager();
 
+        $carte = $em
+            ->getRepository('JeuBundle:Pioche')
+            ->findOneBy(array('id' => $id_carte));
         //Recuperation de la table selon l'id en parametre
         $table = $em
             ->getRepository('JeuBundle:TableJeu')
@@ -407,14 +413,14 @@ class JeuController extends Controller
             ->findOneBy(array('email' => $user->getEmail()));
 
         //On vérifie que c'était bien au tour de l'utilisateur de jouer
-        if($table->getAQuiLeTour() != ($joueur->getOrdreDePassage())) {
+        if($table->getAQuiLeTour() != $joueur->getOrdreDePassage()) {
             //C'est pas a nous de jouer
             $url = $this->generateUrl('jeu_partie', array('id' => $id_table));
             return $this->redirect($url);
         }
 
         //On s'assure qu'il a bien la carte qu'il essaie de jouer
-        $carte = $em->getRepository('JeuBundle:Pioche')->findOneBy(array('proprietaire' => $joueur, 'carte' => $id_carte));
+        $carte = $em->getRepository('JeuBundle:Pioche')->findOneBy(array('proprietaire' => $joueur, 'carte' => $carte->getCarte()));
         if($carte == null){
             //La carte qu'on essaie de jouer n'est pas en notre possession
             $url = $this->generateUrl('jeu_partie', array('id' => $id_table));
@@ -422,16 +428,42 @@ class JeuController extends Controller
         }
 
         //On dépose sa carte sur la table
-        $carte = $em->getRepository('JeuBundle:Pioche')->findOneBy(array('proprietaire' => $joueur, 'carte' => $id_carte));
+        $carte = $em->getRepository('JeuBundle:Pioche')->findOneBy(array('proprietaire' => $joueur, 'carte' => $carte->getCarte()));
         $carte->setEtat('jouee');
 
         //on flush
         $em->flush();
 
-        //On applique l'Effet de la carte
         $em = $this->getDoctrine()->getManager();
-        $carte = $em->getRepository('JeuBundle:Cartes')->find($id_carte);
+        $carte = $em->getRepository('JeuBundle:Cartes')->find($carte->getCarte());
 
+        //Si il n'y a aucune cible possible pour l'effet de la carte, on joue simplement la carte TODO
+
+
+        //Si la carte n'as pas d'effet qui demande d'information a l'utilisateur, on reload simplement la page
+        if($carte->getNom() == "servante" OR $carte->getNom() == "comtesse" OR $carte->getNom() == "princesse"){
+            //Si la carte est la servante, on applique l'effet
+            if($carte->getNom() == "servante")
+                $this->effetServante($id_table,$joueur);
+            //Si tout se passe bien, on fait passer le tour et on affiche
+            if($table->getNbJoueur() == ($table->getAQuiLeTour())){
+                $table->setAQuiLeTour('1');
+            }
+            else{
+                $table->setAQuiLeTour($table->getAQuiLeTour() + 1);
+            }
+
+            //on flush
+            $em->flush();
+
+            //On lance le tour
+            $this->lancerTour($id_table);
+
+            //On genere l'url de la partie de id table
+            $url = $this->generateUrl('jeu_partie', array('id' => $id_table));
+            return $this->redirect($url);
+        }
+        //Sinon on applique l'effet
         $url = $this->generateUrl('jeu_effet', array('id' => $id_table, 'effet' => $carte->getNom()));
         return $this->redirect($url);
     }
@@ -495,9 +527,6 @@ class JeuController extends Controller
                 //On récupère la cible
                 $cible = $request->request->get('cible');
                 $this->effetBaron($id_table, $joueur, $cible);
-                break;
-            case 'servante':
-                $this->effetServante($id_table, $joueur);
                 break;
             case 'prince':
                 //On récupère la cible
@@ -589,6 +618,9 @@ class JeuController extends Controller
 
     public function effetPrince($id_table, $joueur, $cible){
         $em = $this->getDoctrine()->getManager();
+        $adversaire = $em
+            ->getRepository('JeuBundle:Joueur')
+            ->findOneBy(array('id' => $cible));
         //Si il reste encore une carte dans le deck
         $listCarte = $em->getRepository('JeuBundle:Pioche')->findBy(array('table' => $id_table, 'etat' => 'pioche'));
         if($listCarte) {
@@ -602,7 +634,7 @@ class JeuController extends Controller
             $cartePiochee = array_rand($listCarte);
             $carte = $listCarte[$cartePiochee];
             $carte->setEtat('enMain');
-            $carte->setProprietaire($joueur);
+            $carte->setProprietaire($adversaire);
             $em->flush();
         }
 

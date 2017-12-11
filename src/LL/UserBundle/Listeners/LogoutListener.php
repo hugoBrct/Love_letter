@@ -35,26 +35,29 @@ class LogoutListener implements LogoutHandlerInterface {
             ->getRepository('JeuBundle:Joueur')
             ->findOneBy(array('email' => $user->getEmail()));
 
-        //on recupere la table
-        $table = $joueur->getTable();
+        //Si il est dans une partie on supprime la partie (mais sinon non...)
+        if($joueur) {
+            //on recupere la table
+            $table = $joueur->getTable();
 
-        //on recupere les joueurs
-        $joueurs = $this->em
-            ->getRepository('JeuBundle:Joueur')
-            ->recupererListJoueur($table, $joueur);
+            //on recupere les joueurs
+            $joueurs = $this->em
+                ->getRepository('JeuBundle:Joueur')
+                ->recupererListJoueur($table, $joueur);
 
-        //on recupere la pioche
-        $pioche = $this->em
-            ->getRepository('JeuBundle:Pioche')
-            ->findBy(array('table' => $table));
+            //on recupere la pioche
+            $pioche = $this->em
+                ->getRepository('JeuBundle:Pioche')
+                ->findBy(array('table' => $table));
 
-        $this->em->remove($joueur);
-        $this->em->remove($table);
-        foreach($joueurs as $j){
-            $this->em->remove($j);
-        }
-        foreach($pioche as $c){
-            $this->em->remove($c);
+            $this->em->remove($joueur);
+            $this->em->remove($table);
+            foreach ($joueurs as $j) {
+                $this->em->remove($j);
+            }
+            foreach ($pioche as $c) {
+                $this->em->remove($c);
+            }
         }
 
 

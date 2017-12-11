@@ -22,13 +22,19 @@
             <br>
             <br>
             <div class="row">
-                {% if listJoueur|length >= 0 %}
+                {% if listJoueur|length >= 1 %}
                     <a id="lancerPartie" type="button" class="btn btn-primary" href="{{ path('jeu_lancerPartie', {'id' : table.id}) }}">Lancer partie !</a>
                 {% else %}
                     <a id="lancerPartie" type="button" class="btn btn-primary" disabled=true>En attente de joueur</a>
                 {% endif %}
             </div>
         </div>
+        <script>
+            var interval = 3000;
+            setTimeout(function () {
+                window.location.reload();
+            },interval);
+        </script>
     {% else %}
         {#Message d'information (aquiletour, Effet) #}
         {% for label, flashes in app.session.flashbag.all %}
@@ -98,16 +104,23 @@
                 {% endfor %}
             {% endif %}
         </div>
+        {% if  joueur.ordreDePassage  != table.aQuiLeTour %}
+            <script>
+                var interval = 3000;
+                setTimeout(function () {
+                    window.location.reload();
+                },interval);
+            </script>
+        {% else %}
+            {% if effet is defined %}
+                <script type="text/javascript">
+                    $(window).on('load',function(){
+                        $('.modal').modal('show');
+                    });
+                </script>
+                {% include 'modal.html.twig' %}
+            {% endif %}
     {% endif %}
-
-    {% if  joueur.ordreDePassage  != table.aQuiLeTour %}
-    <script>
-        var interval = 3000;
-        setTimeout(function () {
-            window.location.reload();
-        },interval);
-    </script>
-    {% else %}
     <script>
         window.setTimeout(function() {
         $(".alert-success").fadeTo(1500, 0).slideUp(500, function(){
@@ -115,14 +128,5 @@
         });
         }, 3000);
     </script>
-    {% endif %}
-
-    {% if effet is defined %}
-        <script type="text/javascript">
-            $(window).on('load',function(){
-                $('.modal').modal('show');
-            });
-        </script>
-        {% include 'modal.html.twig' %}
     {% endif %}
 {% endblock %}

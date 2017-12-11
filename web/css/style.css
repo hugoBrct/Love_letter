@@ -79,6 +79,7 @@ body {
     transition: all 0.3s;
 }
 .carte_autre_joueur img:hover {
+    z-index: 60;
     -moz-transform: scale(1.5);
     -webkit-transform: scale(1.5);
     transform: scale(1.5);
